@@ -21,6 +21,9 @@ export const Route = createFileRoute("/")({
   }),
   loaderDeps: ({ search }) => ({ q: search.q, page: search.page }),
   loader: async ({ context, deps }) => ({ ...await context.queryClient.ensureQueryData(postsQueryOptions), search: deps }),
+  pendingMs: 150,
+  pendingMinMs: 300,
+  pendingComponent: BlogSkeleton,
   notFoundComponent: () => <FeedMessage title="Page not found">This blog page doesn't exist.</FeedMessage>,
   component: BlogIndex,
   errorComponent: ({ error }) => (
@@ -50,7 +53,7 @@ export const Route = createFileRoute("/")({
       { name: "author", content: "Vipin V" },
       ...(loaderData?.search.q ? [{ name: "robots", content: "noindex, follow" }] : []),
     ],
-    links: [{ rel: "canonical", href: path }, { rel: "alternate", type: "application/rss+xml", title: "Vipin V on Medium", href: "https://medium.com/feed/@vipindas233" }],
+    links: [{ rel: "preconnect", href: "https://miro.medium.com" }, { rel: "canonical", href: path }, { rel: "alternate", type: "application/rss+xml", title: "Vipin V on Medium", href: "https://medium.com/feed/@vipindas233" }],
     scripts: [{ type: "application/ld+json", children: JSON.stringify({
       "@context": "https://schema.org", "@type": "Blog", name: "Vipin V's Blog", url: path,
       description: "Blogs by Vipin V on tech, ideas, memories, projects and travel.",
@@ -76,7 +79,47 @@ function TagPill({ tag }: { tag: string }) {
   );
 }
 
-function PostCard({ post }: { post: MediumPost }) {
+function BlogSkeleton() {
+  return (
+    <div className="mx-auto w-full max-w-3xl border-x border-border" aria-busy="true" aria-label="Loading posts">
+      <section className="relative border-b border-border px-4 py-10">
+        <h1 className="font-pixel text-3xl font-semibold text-foreground sm:text-4xl">Blogs</h1>
+        <CrossMark className="bottom-0 left-0 -translate-x-1/2 translate-y-1/2" />
+        <CrossMark className="bottom-0 right-0 translate-x-1/2 translate-y-1/2" />
+      </section>
+      <section className="relative border-b border-border px-4 py-5">
+        <p className="font-mono text-sm text-muted-foreground">
+          Blogs by Vipin V on tech, ideas, memories, projects and travel.
+        </p>
+        <CrossMark className="bottom-0 left-0 -translate-x-1/2 translate-y-1/2" />
+        <CrossMark className="bottom-0 right-0 translate-x-1/2 translate-y-1/2" />
+      </section>
+      <section className="px-4 py-6">
+        <p className="mb-4 font-mono text-xs text-muted-foreground">
+          fetching posts<span className="animate-pulse">_</span>
+        </p>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {Array.from({ length: 4 }, (_, i) => (
+            <div key={i} className="rounded-lg border border-dashed border-border p-2">
+              <div className="skeleton aspect-video w-full rounded-md" />
+              <div className="space-y-2 px-1 pt-3">
+                <div className="skeleton h-4 w-4/5 rounded-sm" />
+                <div className="skeleton h-4 w-1/2 rounded-sm" />
+                <div className="skeleton mt-3 h-3 w-1/3 rounded-sm" />
+              </div>
+              <div className="flex gap-1.5 px-1 pb-1 pt-3">
+                <div className="skeleton h-5 w-14 rounded-md" />
+                <div className="skeleton h-5 w-10 rounded-md" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function PostCard({ post, priority = false }: { post: MediumPost; priority?: boolean }) {
   return (
     <a
       href={post.link}
@@ -88,8 +131,12 @@ function PostCard({ post }: { post: MediumPost }) {
         <img
           src={post.image}
           alt=""
-          loading="lazy"
-          className="aspect-video w-full rounded-md object-cover object-center"
+          width={800}
+          height={450}
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : "auto"}
+          decoding="async"
+          className="skeleton aspect-video w-full rounded-md object-cover object-center"
         />
       ) : (
         <div className="flex aspect-video w-full items-center justify-center rounded-md bg-muted">
@@ -187,8 +234,8 @@ function BlogIndex() {
           </p>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {results.posts.map((post) => (
-              <PostCard key={post.link} post={post} />
+            {results.posts.map((post, i) => (
+              <PostCard key={post.link} post={post} priority={i < 2} />
             ))}
           </div>
         )}
