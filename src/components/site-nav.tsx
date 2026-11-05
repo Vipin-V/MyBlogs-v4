@@ -21,15 +21,21 @@ export function SiteNav() {
   }, [location.href]);
 
   useEffect(() => {
-    const onEscape = (event: KeyboardEvent) => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setSearchOpen((open) => !open);
+        setMenuOpen(false);
+        return;
+      }
       if (event.key === "Escape") {
         setMenuOpen(false);
         setSearchOpen(false);
         document.getElementById(searchOpen ? "search-toggle" : "menu-toggle")?.focus();
       }
     };
-    document.addEventListener("keydown", onEscape);
-    return () => document.removeEventListener("keydown", onEscape);
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
   }, [searchOpen]);
 
   useEffect(() => {
@@ -82,7 +88,7 @@ export function SiteNav() {
 
   return (
     <header className="sticky top-0 z-50 mx-auto w-full max-w-3xl border-b border-border border-x bg-background">
-      <div className="grid h-14 grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
+      <div className="grid h-14 grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-4">
         <Link to="/" search={{ q: "", tag: "All", page: 1 }} className="w-fit font-pixel text-3xl font-semibold leading-none text-foreground" aria-label="Vipin V blog">
           V
         </Link>
@@ -95,7 +101,7 @@ export function SiteNav() {
             About
           </Link>
         </nav>
-          <Button id="search-toggle" variant="ghost" size="icon" aria-label={searchOpen ? "Close search" : "Search posts"} title="Search posts" aria-expanded={searchOpen} aria-controls="nav-search" onClick={() => { setSearchOpen(!searchOpen); setMenuOpen(false); }} className="text-muted-foreground">
+          <Button id="search-toggle" variant="ghost" size="icon" aria-label={searchOpen ? "Close search" : "Search posts"} title="Search posts (Ctrl+K)" aria-expanded={searchOpen} aria-controls="nav-search" onClick={() => { setSearchOpen(!searchOpen); setMenuOpen(false); }} className="text-muted-foreground">
             {searchOpen ? <X /> : <Search />}
           </Button>
           <Button
