@@ -128,14 +128,14 @@ export function SiteNav() {
         </nav>
       )}
       {searchOpen && (
-        <form id="nav-search" role="search" className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-t border-border py-3" onSubmit={(event) => {
+        <form id="nav-search" role="search" className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 py-3" onSubmit={(event) => {
           event.preventDefault();
           const q = String(new FormData(event.currentTarget).get("q") ?? "").trim();
           void navigate({ to: "/", search: { q, tag: "All", page: 1 } });
           setSearchOpen(false);
         }}>
-          <input autoFocus type="search" name="q" aria-label="Search posts" placeholder="Search posts…" defaultValue={typeof location.search.q === "string" ? location.search.q : ""} className="h-10 min-w-0 rounded-md border border-input bg-background px-3 font-mono text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring" />
-          <Button type="submit" variant="outline" size="icon" aria-label="Submit search" title="Search"><Search /></Button>
+          <input autoFocus type="search" name="q" aria-label="Search posts" placeholder="Search posts…" defaultValue={typeof location.search.q === "string" ? location.search.q : ""} className="h-10 min-w-0 rounded-md border border-input bg-background px-3 text-base font-mono text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring" />
+          <Button type="submit" variant="outline" size="icon" aria-label="Submit search" title="Search" className="size-10"><Search /></Button>
         </form>
       )}
     </header>
