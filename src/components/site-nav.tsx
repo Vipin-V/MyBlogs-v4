@@ -1,7 +1,8 @@
+import { flushSync } from "react-dom";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { ArrowUpRight, BookOpen, Moon, Search, Sun, UserRound, X } from "lucide-react";
-import { PixelCat, PixelVJ } from "@/components/site-chrome";
+import { PixelCat } from "@/components/site-chrome";
 import { Button } from "@/components/ui/button";
 
 const navLinkClass =
@@ -55,42 +56,35 @@ export function SiteNav() {
       return;
     }
 
-    // Peek at the next theme's background color without painting it.
-    const probe = document.createElement("div");
-    probe.className = "bg-background";
-    probe.style.display = "none";
-    document.body.appendChild(probe);
-    document.documentElement.classList.toggle("dark", next);
-    const nextBackground = getComputedStyle(probe).backgroundColor;
-    document.documentElement.classList.toggle("dark", !next);
-    probe.remove();
+    const doc = document as Document & { startViewTransition?: (cb: () => void) => { ready: Promise<void>; finished: Promise<void> } };
+    if (!doc.startViewTransition) {
+      apply();
+      return;
+    }
 
-    // Spread the new theme's color in a circle from the toggle button,
-    // then swap the real theme underneath and remove the overlay.
+    // Spread the real re-themed page in a circle from the toggle button.
     const rect = event.currentTarget.getBoundingClientRect();
     const x = rect.left + rect.width / 2;
     const y = rect.top + rect.height / 2;
     const radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
-    const overlay = document.createElement("div");
-    overlay.style.cssText = `position:fixed;inset:0;z-index:9999;pointer-events:none;background:${nextBackground};clip-path:circle(0px at ${x}px ${y}px)`;
-    document.body.appendChild(overlay);
     wipeInFlight.current = true;
-    const animation = overlay.animate(
-      [{ clipPath: `circle(0px at ${x}px ${y}px)` }, { clipPath: `circle(${radius}px at ${x}px ${y}px)` }],
-      { duration: 500, easing: "cubic-bezier(0.4, 0, 0.2, 1)", fill: "forwards" },
-    );
-    animation.onfinish = () => {
-      apply();
-      overlay.remove();
+    const transition = doc.startViewTransition(() => flushSync(apply));
+    void transition.ready.then(() => {
+      document.documentElement.animate(
+        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+        { duration: 550, easing: "cubic-bezier(0.4, 0, 0.2, 1)", pseudoElement: "::view-transition-new(root)" },
+      );
+    });
+    void transition.finished.finally(() => {
       wipeInFlight.current = false;
-    };
+    });
   };
 
   return (
     <header className="mx-auto w-full max-w-3xl border-b border-border border-x px-4">
       <div className="grid h-14 grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
-        <Link to="/" search={{ q: "", tag: "All", page: 1 }} className="w-fit font-pixel text-xl font-bold text-foreground" aria-label="Vipin V blog">
-          <PixelVJ />
+        <Link to="/" search={{ q: "", tag: "All", page: 1 }} className="w-fit font-pixel text-3xl font-semibold leading-none text-foreground" aria-label="Vipin V blog">
+          V
         </Link>
         <div className="flex shrink-0 items-center gap-1">
         <nav aria-label="Main navigation" className="mr-3 hidden items-center gap-5 sm:flex">
