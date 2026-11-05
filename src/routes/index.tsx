@@ -16,9 +16,9 @@ const postsQueryOptions = queryOptions({
 
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>) => ({
-    q: typeof search.q === "string" ? search.q : "",
-    tag: typeof search.tag === "string" ? search.tag : "All",
-    page: typeof search.page === "number" && Number.isFinite(search.page) ? search.page : 1,
+    q: typeof search["q"] === "string" ? search["q"] : "",
+    tag: typeof search["tag"] === "string" ? search["tag"] : "All",
+    page: typeof search["page"] === "number" && Number.isFinite(search["page"]) ? search["page"] : 1,
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(postsQueryOptions),
   notFoundComponent: () => <FeedMessage title="Page not found">This blog page doesn't exist.</FeedMessage>,
