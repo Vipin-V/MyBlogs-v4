@@ -1,6 +1,8 @@
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { CatSprite } from "@/components/cat-sprite";
+import { catPose } from "@/lib/cat-state";
 
 export function PixelV() {
   return <svg aria-hidden viewBox="0 0 20 20" shapeRendering="crispEdges" className="size-6"><path d="M0 0h4v12h4v4h4v-4h4V0h4v12h-4v4h-4v4H8v-4H4v-4H0z" fill="currentColor" /></svg>;
@@ -22,51 +24,22 @@ export function CrossMark({ className }: { className?: string }) {
   );
 }
 
-const CAT_ROWS = [
-  "..............##.",
-  ".#..#.........#.#",
-  ".####.........###",
-  ".####.......#####",
-  "..##############.",
-  "..##############.",
-  "..#############..",
-  "..############...",
-  "...##########....",
-];
-
-/** Crisp pixel cat with a short, repeatable petting reaction. */
+/** Hover wakes the cat; clicking triggers a short playful swipe. */
 export function PixelCat({ className }: { className?: string }) {
-  const [pets, setPets] = useState(0);
-  const [awake, setAwake] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [attacks, setAttacks] = useState(0);
+  const [attacking, setAttacking] = useState(false);
   useEffect(() => {
-    if (!awake) return;
-    const timer = window.setTimeout(() => setAwake(false), 1500);
+    if (!attacking) return;
+    const timer = window.setTimeout(() => setAttacking(false), 700);
     return () => window.clearTimeout(timer);
-  }, [awake, pets]);
-  const height = CAT_ROWS.length;
-  const width = CAT_ROWS[0]?.length ?? 0;
+  }, [attacking, attacks]);
+  const pose = catPose(hovered || focused, attacking);
   return (
-    <Button variant="ghost" aria-label="Pet the cat" title="Pet the cat" onClick={() => { setPets((count) => count + 1); setAwake(true); }} data-state={awake ? "awake" : "sleeping"} className={cn("relative h-16 w-20 shrink-0 p-2 text-muted-foreground hover:bg-transparent hover:text-foreground [&_svg]:h-9 [&_svg]:w-full", className)}>
-      <span role="status" className="pointer-events-none absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap font-pixel text-xs text-foreground">{awake ? (pets % 2 ? "meow!" : "purr ♥") : ""}</span>
-    <svg
-      key={pets}
-      aria-hidden
-      viewBox={`0 0 ${width} ${height}`}
-      shapeRendering="crispEdges"
-      className={awake ? "cat-pet" : ""}
-    >
-      {CAT_ROWS.flatMap((row, y) =>
-        row
-          .split("")
-          .map((cell, x) =>
-            cell === "#" ? (
-              <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill="currentColor" />
-            ) : null,
-          ),
-      )}
-      <rect x="2" y="4" width="1" height={awake ? 1 : 0.5} className="fill-background" />
-      <rect x="4" y="4" width="1" height={awake ? 1 : 0.5} className="fill-background" />
-    </svg>
+    <Button variant="ghost" aria-label="Play with the cat" title="Play with the cat" onPointerEnter={(event) => { if (event.pointerType !== "touch") setHovered(true); }} onPointerLeave={() => setHovered(false)} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} onClick={() => { setAttacks((count) => count + 1); setAttacking(true); }} data-state={pose} className={cn("relative h-20 w-20 shrink-0 p-0 hover:bg-transparent [&_svg]:size-20", className)}>
+      <CatSprite key={attacks} pose={pose} />
+      <span role="status" className="sr-only">{attacking ? "The cat playfully swipes at you!" : ""}</span>
     </Button>
   );
 }

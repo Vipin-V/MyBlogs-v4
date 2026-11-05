@@ -1,0 +1,13 @@
+# Vipin V's Blog
+
+> Blogs by Vipin V on tech, ideas, memories, projects and travel.
+
+Vipin writes personal posts about technology, projects, travel, food and everyday life. There is no fixed niche or publishing schedule. This website lists his posts from his public Medium RSS feed. Full articles are read on Medium; Medium is the source of truth. Card reading times are estimates at 200 words per minute, rounded up, not Medium's official reading times.
+
+## Pages
+- [Blogs](/): Recent articles with titles, publication dates, tags, estimated reading times and links to the original articles. Search and pagination are available.
+- [About Vipin](/about): The author's own introduction and interests.
+
+## Writing
+- [Vipin on Medium](https://medium.com/@vipindas233): Original full articles and the author's publication history.
+- [Public Medium RSS](https://medium.com/feed/@vipindas233): Machine-readable source for the latest articles.

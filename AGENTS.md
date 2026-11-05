@@ -15,4 +15,5 @@
 - Medium cover images are rewritten from the legacy `cdn-images-1.medium.com` host to `miro.medium.com/v2/resize:fit:1400/` — the legacy host's redirects don't render in browsers.
 - Search and page selection live in validated blog URL parameters; legacy tag parameters normalize to All so removed filters cannot hide posts. Shared pure utilities filter before pagination and estimate reading time from RSS article HTML because Medium does not supply it in RSS.
 - Brand marks and the interactive footer cat use crisp SVG pixels; cat reactions are local transient state with cleanup and reduced-motion support, requiring no external media or service.
+- Public leaf routes own canonicals and JSON-LD; pagination uses crawlable links and search results are noindex. The static llms.txt lists only public content; sitemap creation waits for a published public URL.
 

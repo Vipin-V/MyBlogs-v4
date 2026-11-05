@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, Clock, X } from "lucide-react";
 import { getMediumPosts } from "@/lib/medium.functions";
@@ -19,7 +19,8 @@ export const Route = createFileRoute("/")({
     tag: "All",
     page: typeof search["page"] === "number" && Number.isFinite(search["page"]) ? search["page"] : 1,
   }),
-  loader: ({ context }) => context.queryClient.ensureQueryData(postsQueryOptions),
+  loaderDeps: ({ search }) => ({ q: search.q, page: search.page }),
+  loader: async ({ context, deps }) => ({ ...await context.queryClient.ensureQueryData(postsQueryOptions), search: deps }),
   notFoundComponent: () => <FeedMessage title="Page not found">This blog page doesn't exist.</FeedMessage>,
   component: BlogIndex,
   errorComponent: ({ error }) => (
@@ -27,7 +28,10 @@ export const Route = createFileRoute("/")({
       Couldn't load this page. {error instanceof Error ? error.message : ""}
     </FeedMessage>
   ),
-  head: () => ({
+  head: ({ loaderData }) => {
+    const page = selectPosts(loaderData?.posts ?? [], loaderData?.search.q ?? "", "All", loaderData?.search.page ?? 1);
+    const path = page.page > 1 ? `/?page=${page.page}` : "/";
+    return {
     meta: [
       { title: "Blogs · Vipin V" },
       {
@@ -42,8 +46,18 @@ export const Route = createFileRoute("/")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:url", content: path },
+      { name: "author", content: "Vipin V" },
+      ...(loaderData?.search.q ? [{ name: "robots", content: "noindex, follow" }] : []),
     ],
-  }),
+    links: [{ rel: "canonical", href: path }, { rel: "alternate", type: "application/rss+xml", title: "Vipin V on Medium", href: "https://medium.com/feed/@vipindas233" }],
+    scripts: [{ type: "application/ld+json", children: JSON.stringify({
+      "@context": "https://schema.org", "@type": "Blog", name: "Vipin V's Blog", url: path,
+      description: "Blogs by Vipin V on tech, ideas, memories, projects and travel.",
+      author: { "@type": "Person", name: "Vipin V", url: "/about", sameAs: ["https://medium.com/@vipindas233"] },
+      blogPost: page.posts.map((post) => ({ "@type": "BlogPosting", headline: post.title, url: post.link, ...(post.date ? { datePublished: post.date } : {}), ...(post.image ? { image: post.image } : {}), author: { "@type": "Person", name: "Vipin V", sameAs: "https://medium.com/@vipindas233" }, keywords: post.tags.join(", ") })),
+    }).replace(/</g, "\\u003c") }],
+  }; },
 });
 
 function formatDate(iso: string): string {
@@ -79,13 +93,13 @@ function PostCard({ post }: { post: MediumPost }) {
         />
       ) : (
         <div className="flex aspect-video w-full items-center justify-center rounded-md bg-muted">
-          <span className="font-pixel text-2xl text-muted-foreground">VJ</span>
+          <span className="font-pixel text-2xl text-muted-foreground">V</span>
         </div>
       )}
       <div className="px-1 pt-3">
-        <h3 className="break-words text-base font-semibold leading-snug text-foreground group-hover:underline">
+        <h2 className="break-words text-base font-semibold leading-snug text-foreground group-hover:underline">
           {post.title}
-        </h3>
+        </h2>
         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-muted-foreground">
           {post.date && <time dateTime={post.date}>{formatDate(post.date)}</time>}
           <span className="inline-flex items-center gap-1.5" title="Estimated from article text"><Clock aria-hidden className="size-3" />~{post.readingMinutes} min read</span>
@@ -126,10 +140,6 @@ function BlogIndex() {
   const navigate = Route.useNavigate();
 
   const results = selectPosts(posts, q, "All", page);
-  const changePage = (next: number) => {
-    void navigate({ search: (prev) => ({ ...prev, page: next }), resetScroll: false });
-    document.getElementById("post-list")?.scrollIntoView({ block: "start" });
-  };
 
   if (data.error && posts.length === 0) {
     return <FeedMessage title="Couldn't load posts">{data.error}</FeedMessage>;
@@ -181,9 +191,9 @@ function BlogIndex() {
         )}
         {results.pageCount > 1 && (
           <nav aria-label="Post pagination" className="mt-6 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-t border-border pt-5">
-            <Button variant="outline" size="icon" disabled={results.page === 1} aria-label="Previous page" title="Previous page" onClick={() => changePage(results.page - 1)}><ChevronLeft /></Button>
+            {results.page === 1 ? <Button variant="outline" size="icon" disabled aria-label="Previous page"><ChevronLeft /></Button> : <Button asChild variant="outline" size="icon"><Link to="/" search={{ q, tag: "All", page: results.page - 1 }} aria-label="Previous page" title="Previous page"><ChevronLeft /></Link></Button>}
             <p className="min-w-0 text-center font-mono text-xs text-muted-foreground" aria-live="polite">Page {results.page} of {results.pageCount}<span className="mt-1 block">{results.start + 1}–{results.start + results.posts.length} of {results.total} posts</span></p>
-            <Button variant="outline" size="icon" disabled={results.page === results.pageCount} aria-label="Next page" title="Next page" onClick={() => changePage(results.page + 1)}><ChevronRight /></Button>
+            {results.page === results.pageCount ? <Button variant="outline" size="icon" disabled aria-label="Next page"><ChevronRight /></Button> : <Button asChild variant="outline" size="icon"><Link to="/" search={{ q, tag: "All", page: results.page + 1 }} aria-label="Next page" title="Next page"><ChevronRight /></Link></Button>}
           </nav>
         )}
       </section>

@@ -24,7 +24,11 @@ export const Route = createFileRoute("/about")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:url", content: "/about" },
+      { name: "author", content: "Vipin V" },
     ],
+    links: [{ rel: "canonical", href: "/about" }],
+    scripts: [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "AboutPage", url: "/about", name: "About Vipin V", mainEntity: { "@type": "Person", name: "Vipin V", sameAs: ["https://medium.com/@vipindas233"], description: "Writing about travel, food, technology and everyday life." } }) }],
   }),
 });
 

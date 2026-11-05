@@ -17,3 +17,10 @@
 - [x] Click-reactive footer cat with hop, meow/purr and resting state; reference interaction could not be fetched for exact comparison
 - [x] Polished mobile navigation and supplied blog subtitle
 - [x] Explain reading-time calculation and verify interactions on mobile/desktop, keyboard cat interaction, favicon response and six passing tests
+
+## Cat and discoverability
+- [x] Replace cat with recognizable sleeping, awake and attack pixel poses
+- [x] Improve public page metadata, structured data and crawlable pagination
+- [x] Add the requested AI-readable /llms.txt guide
+- [x] Verify cat states, crawlable content and metadata; all ten tests pass, SSR contains all three post links, no runtime errors
+- [ ] Sitemap setup after a published public URL exists (blocked: not published)
