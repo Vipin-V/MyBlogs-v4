@@ -46,8 +46,8 @@ function upgradeImageSize(url: string): string {
   const legacy = url.match(
     /https?:\/\/cdn-images-1\.medium\.com\/(?:max|fit)\/\d+\/(.+)$/i,
   );
-  if (legacy?.[1]) return `https://miro.medium.com/v2/resize:fit:1400/${legacy[1]}`;
-  return url.replace(/\/(max|max-internal)\//, "/max/1400/");
+  if (legacy?.[1]) return `https://miro.medium.com/v2/resize:fit:800/${legacy[1]}`;
+  return url.replace(/\/(max|max-internal)\//, "/max/800/");
 }
 
 function cleanLink(url: string): string {
@@ -56,9 +56,32 @@ function cleanLink(url: string): string {
   return clean.length > 0 ? clean : url;
 }
 
+// Per-server-instance cache so most visitors skip the round-trip to Medium.
+const CACHE_MS = 5 * 60 * 1000;
+let cached: { at: number; posts: MediumPost[] } | null = null;
+let inflight: Promise<MediumPost[]> | null = null;
+
 export async function fetchMediumPosts(
   username: string = MEDIUM_USERNAME,
 ): Promise<MediumPost[]> {
+  if (cached && Date.now() - cached.at < CACHE_MS) return cached.posts;
+  if (inflight) return inflight;
+  inflight = fetchFeed(username)
+    .then((posts) => {
+      cached = { at: Date.now(), posts };
+      return posts;
+    })
+    .catch((error: unknown) => {
+      if (cached) return cached.posts; // serve last good copy if Medium hiccups
+      throw error;
+    })
+    .finally(() => {
+      inflight = null;
+    });
+  return inflight;
+}
+
+async function fetchFeed(username: string): Promise<MediumPost[]> {
   const response = await fetch(`https://medium.com/feed/@${username}`, {
     headers: {
       "User-Agent": "Mozilla/5.0 (compatible; personal-blog/1.0)",
