@@ -37,7 +37,12 @@ function extractField(block: string, tag: string): string | null {
 }
 
 function upgradeImageSize(url: string): string {
-  // Medium serves images at /max/<width>/... — request a larger version.
+  // cdn-images-1.medium.com links redirect unreliably; rewrite to Medium's
+  // current image host and request a larger resize.
+  const legacy = url.match(
+    /https?:\/\/cdn-images-1\.medium\.com\/(?:max|fit)\/\d+\/(.+)$/i,
+  );
+  if (legacy) return `https://miro.medium.com/v2/resize:fit:1400/${legacy[1]}`;
   return url.replace(/\/(max|max-internal)\//, "/max/1400/");
 }
 
