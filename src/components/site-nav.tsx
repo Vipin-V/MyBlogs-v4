@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { ArrowUpRight, BookOpen, Moon, Search, Sun, UserRound, X } from "lucide-react";
 import { PixelCat, PixelVJ } from "@/components/site-chrome";
