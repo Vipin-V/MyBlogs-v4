@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { ArrowUpRight, BookOpen, Moon, Search, Sun, UserRound, X } from "lucide-react";
-import { PixelCat, PixelV } from "@/components/site-chrome";
+import { PixelCat, PixelVJ } from "@/components/site-chrome";
 import { Button } from "@/components/ui/button";
 
 const navLinkClass =
@@ -50,7 +50,7 @@ export function SiteNav() {
     <header className="mx-auto w-full max-w-3xl border-b border-border border-x px-4">
       <div className="grid h-14 grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
         <Link to="/" search={{ q: "", tag: "All", page: 1 }} className="w-fit font-pixel text-xl font-bold text-foreground" aria-label="Vipin V blog">
-          <PixelV />
+          <PixelVJ />
         </Link>
         <div className="flex shrink-0 items-center gap-1">
         <nav aria-label="Main navigation" className="mr-3 hidden items-center gap-5 sm:flex">
