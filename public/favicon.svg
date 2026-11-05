@@ -1,0 +1,1 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" shape-rendering="crispEdges"><style>:root{--background:oklch(0.1 0.005 285.8);--foreground:oklch(0.96 0.003 285.8)}</style><rect width="32" height="32" rx="4" fill="var(--background)"/><path d="M6 6h4v12h4v4h4v-4h4V6h4v12h-4v4h-4v4h-4v-4h-4v-4H6z" fill="var(--foreground)"/></svg>

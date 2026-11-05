@@ -33,12 +33,12 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Articles by Vipin V on memories, movies and ideas — published on Medium, shown here automatically.",
+          "Blogs by Vipin V on tech, ideas, memories, projects and travel.",
       },
       { property: "og:title", content: "Blogs · Vipin V" },
       {
         property: "og:description",
-        content: "Articles by Vipin V on memories, movies and ideas — published on Medium.",
+        content: "Blogs by Vipin V on tech, ideas, memories, projects and travel.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -155,7 +155,7 @@ function BlogIndex() {
 
       <section className="relative border-b border-border px-4 py-5">
         <p className="font-mono text-sm text-muted-foreground">
-          Articles by Vipin V on memories, movies and ideas — published on Medium.
+          Blogs by Vipin V on tech, ideas, memories, projects and travel.
         </p>
         <CrossMark className="bottom-0 left-0 -translate-x-1/2 translate-y-1/2" />
         <CrossMark className="bottom-0 right-0 translate-x-1/2 translate-y-1/2" />

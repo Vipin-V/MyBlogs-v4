@@ -148,3 +148,21 @@
   background-image: radial-gradient(var(--color-border) 1px, transparent 1px);
   background-size: 14px 14px;
 }
+
+@keyframes cat-pet {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  25% { transform: translateY(-8px) rotate(-6deg); }
+  50% { transform: translateY(0) rotate(4deg); }
+  75% { transform: translateY(-4px) rotate(-3deg); }
+}
+
+@keyframes menu-reveal {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cat-pet { animation: cat-pet 550ms steps(4, end) 2; }
+.mobile-menu { animation: menu-reveal 180ms ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .cat-pet, .mobile-menu { animation: none; }
+}
