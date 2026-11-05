@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
 import { ChevronLeft, ChevronRight, Clock, X } from "lucide-react";
 import { getMediumPosts } from "@/lib/medium.functions";
 import type { MediumPost } from "@/lib/medium.functions";
@@ -17,7 +16,7 @@ const postsQueryOptions = queryOptions({
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>) => ({
     q: typeof search["q"] === "string" ? search["q"] : "",
-    tag: typeof search["tag"] === "string" ? search["tag"] : "All",
+    tag: "All",
     page: typeof search["page"] === "number" && Number.isFinite(search["page"]) ? search["page"] : 1,
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(postsQueryOptions),
@@ -53,32 +52,6 @@ function formatDate(iso: string): string {
   const dd = String(d.getUTCDate()).padStart(2, "0");
   const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
   return `${dd}.${mm}.${d.getUTCFullYear()}`;
-}
-
-function Chip({
-  label,
-  active,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <Button
-      variant={active ? "default" : "outline"}
-      size="sm"
-      aria-pressed={active}
-      onClick={onClick}
-      className={
-        active
-          ? "rounded-md bg-foreground px-2.5 py-1 font-mono text-xs text-background transition-colors"
-          : "rounded-md border border-border px-2.5 py-1 font-mono text-xs text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
-      }
-    >
-      {label}
-    </Button>
-  );
 }
 
 function TagPill({ tag }: { tag: string }) {
@@ -149,15 +122,10 @@ function FeedMessage({
 function BlogIndex() {
   const { data } = useSuspenseQuery(postsQueryOptions);
   const posts = data.posts;
-  const { q, tag: filter, page } = Route.useSearch();
+  const { q, page } = Route.useSearch();
   const navigate = Route.useNavigate();
 
-  const tags = useMemo(
-    () => Array.from(new Set(posts.flatMap((post) => post.tags))).sort(),
-    [posts],
-  );
-  const results = selectPosts(posts, q, filter, page);
-  const setFilter = (tag: string) => { void navigate({ search: (prev) => ({ ...prev, tag, page: 1 }), resetScroll: false }); };
+  const results = selectPosts(posts, q, "All", page);
   const changePage = (next: number) => {
     void navigate({ search: (prev) => ({ ...prev, page: next }), resetScroll: false });
     document.getElementById("post-list")?.scrollIntoView({ block: "start" });
@@ -189,23 +157,6 @@ function BlogIndex() {
         <p className="font-mono text-sm text-muted-foreground">
           Articles by Vipin V on memories, movies and ideas — published on Medium.
         </p>
-        <CrossMark className="bottom-0 left-0 -translate-x-1/2 translate-y-1/2" />
-        <CrossMark className="bottom-0 right-0 translate-x-1/2 translate-y-1/2" />
-      </section>
-
-      <section className="relative border-b border-border px-4 py-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="font-mono text-sm text-muted-foreground">Filter:</span>
-          <Chip label="All" active={filter === "All"} onClick={() => setFilter("All")} />
-          {tags.map((tag) => (
-            <Chip
-              key={tag}
-              label={tag}
-              active={filter === tag}
-              onClick={() => setFilter(tag)}
-            />
-          ))}
-        </div>
         <CrossMark className="bottom-0 left-0 -translate-x-1/2 translate-y-1/2" />
         <CrossMark className="bottom-0 right-0 translate-x-1/2 translate-y-1/2" />
       </section>
