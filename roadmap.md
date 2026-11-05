@@ -13,7 +13,7 @@
 - [x] Verify blog and About on mobile and desktop; search works and all six utility tests pass
 
 ## Branding and interaction
-- [ ] Single pixel V branding and matching favicon
-- [ ] Click-reactive footer cat inspired by the reference
-- [ ] Polished mobile navigation and supplied blog subtitle
-- [ ] Explain reading-time calculation and verify interactions
+- [x] Single pixel V branding and matching favicon
+- [x] Click-reactive footer cat with hop, meow/purr and resting state; reference interaction could not be fetched for exact comparison
+- [x] Polished mobile navigation and supplied blog subtitle
+- [x] Explain reading-time calculation and verify interactions on mobile/desktop, keyboard cat interaction, favicon response and six passing tests
