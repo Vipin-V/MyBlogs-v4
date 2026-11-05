@@ -81,7 +81,7 @@ export function SiteNav() {
   };
 
   return (
-    <header className="mx-auto w-full max-w-3xl border-b border-border border-x px-4">
+    <header className="sticky top-0 z-50 mx-auto w-full max-w-3xl border-b border-border border-x bg-background">
       <div className="grid h-14 grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
         <Link to="/" search={{ q: "", tag: "All", page: 1 }} className="w-fit font-pixel text-3xl font-semibold leading-none text-foreground" aria-label="Vipin V blog">
           V
