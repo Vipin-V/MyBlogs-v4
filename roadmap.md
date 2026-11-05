@@ -11,3 +11,9 @@
 - [x] Remove the top tag filters without affecting search or pagination
 - [x] Replace the About placeholder with the supplied biography
 - [x] Verify blog and About on mobile and desktop; search works and all six utility tests pass
+
+## Branding and interaction
+- [ ] Single pixel V branding and matching favicon
+- [ ] Click-reactive footer cat inspired by the reference
+- [ ] Polished mobile navigation and supplied blog subtitle
+- [ ] Explain reading-time calculation and verify interactions
