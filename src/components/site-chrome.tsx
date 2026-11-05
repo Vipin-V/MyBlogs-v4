@@ -31,7 +31,7 @@ const CAT_ROWS = [
 /** Tiny sleeping pixel cat, drawn with crisp SVG rects. */
 export function PixelCat({ className }: { className?: string }) {
   const height = CAT_ROWS.length;
-  const width = CAT_ROWS[0].length;
+  const width = CAT_ROWS[0]?.length ?? 0;
   return (
     <svg
       aria-hidden

@@ -33,7 +33,8 @@ function extractField(block: string, tag: string): string | null {
   );
   const match = block.match(re);
   if (!match) return null;
-  return decodeXmlEntities(match[1] ?? match[2] ?? "").trim();
+  const value = match[1] ?? match[2] ?? "";
+  return decodeXmlEntities(value).trim();
 }
 
 function upgradeImageSize(url: string): string {
@@ -42,13 +43,13 @@ function upgradeImageSize(url: string): string {
   const legacy = url.match(
     /https?:\/\/cdn-images-1\.medium\.com\/(?:max|fit)\/\d+\/(.+)$/i,
   );
-  if (legacy) return `https://miro.medium.com/v2/resize:fit:1400/${legacy[1]}`;
+  if (legacy?.[1]) return `https://miro.medium.com/v2/resize:fit:1400/${legacy[1]}`;
   return url.replace(/\/(max|max-internal)\//, "/max/1400/");
 }
 
 function cleanLink(url: string): string {
   // Strip tracking query params (e.g. ?source=rss-...) from Medium links.
-  const clean = url.split("?")[0];
+  const clean = url.split("?")[0] ?? "";
   return clean.length > 0 ? clean : url;
 }
 
@@ -70,7 +71,8 @@ export async function fetchMediumPosts(
   const items = xml
     .split("<item>")
     .slice(1)
-    .map((chunk) => chunk.split("</item>")[0]);
+    .map((chunk) => chunk.split("</item>")[0])
+    .filter((chunk): chunk is string => chunk !== undefined);
 
   const posts: MediumPost[] = [];
   for (const item of items) {
@@ -85,14 +87,16 @@ export async function fetchMediumPosts(
     const categoryRe = /<category[^>]*>(?:<!\[CDATA\[([\s\S]*?)\]\]>|([\s\S]*?))<\/category>/gi;
     let categoryMatch: RegExpExecArray | null;
     while ((categoryMatch = categoryRe.exec(item)) !== null) {
-      const tag = decodeXmlEntities(categoryMatch[1] ?? categoryMatch[2] ?? "").trim();
+      const raw = categoryMatch[1] ?? categoryMatch[2] ?? "";
+      const tag = decodeXmlEntities(raw).trim();
       if (tag && !tags.includes(tag)) tags.push(tag);
     }
 
     // Cover image: first <img> inside the post content.
     const content = extractField(item, "content:encoded") ?? "";
     const imgMatch = content.match(/<img[^>]+src=["']([^"']+)["']/i);
-    const image = imgMatch ? upgradeImageSize(decodeXmlEntities(imgMatch[1])) : null;
+    const imgSrc = imgMatch?.[1];
+    const image = imgSrc ? upgradeImageSize(decodeXmlEntities(imgSrc)) : null;
 
     posts.push({
       title,
