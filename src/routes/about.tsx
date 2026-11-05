@@ -15,12 +15,12 @@ export const Route = createFileRoute("/about")({
       { title: "About · Vipin V" },
       {
         name: "description",
-        content: "About Vipin V — writer and maker behind this blog, powered by Medium.",
+        content: "Meet Vipin — writing about travel, food, tech rabbit holes and life, with no niche or posting schedule.",
       },
       { property: "og:title", content: "About · Vipin V" },
       {
         property: "og:description",
-        content: "About Vipin V — writer and maker behind this blog, powered by Medium.",
+        content: "Meet Vipin — writing about travel, food, tech rabbit holes and life, with no niche or posting schedule.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -32,7 +32,7 @@ function AboutPage() {
   return (
     <div className="mx-auto w-full max-w-3xl border-x border-border">
       <section className="relative border-b border-border px-4 py-10">
-        <h1 className="font-pixel text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+        <h1 className="font-pixel text-3xl font-semibold text-foreground sm:text-4xl">
           About
         </h1>
         <CrossMark className="bottom-0 left-0 -translate-x-1/2 translate-y-1/2" />
@@ -41,15 +41,18 @@ function AboutPage() {
 
       <section className="relative px-4 py-8">
         <div className="max-w-prose space-y-4 font-mono text-sm leading-relaxed text-muted-foreground">
-          <p className="font-sans text-lg font-semibold text-foreground">Hi, I'm Vipin V.</p>
+          <p className="font-sans text-lg font-semibold text-foreground">hey, i'm Vipin.</p>
           <p>
-            I write stories and memories on Medium — from Navratri nights back in
-            Gujarat to the little things that make everyday life worth it.
+            so this is my blog. no niche, no content strategy, no posting schedule, just me dumping my thoughts on the internet like it's 2009 and nobody's watching.
           </p>
           <p>
-            Everything I publish on Medium shows up on the blog page here
-            automatically, so this site is always up to date with my latest
-            writing.
+            i write about whatever's going on in my head at the time. sometimes it's places i visited. sometimes it's a meal that genuinely changed my life. sometimes it's a tech thing i went down a rabbit hole on at 2am. and sometimes it's just... life stuff. the weird, the good, the "why did i do that" moments.
+          </p>
+          <p>
+            i'm not trying to be an influencer or a thought leader or whatever. i just like writing, and i figured someone out there might find it relatable or useful or at least mildly entertaining.
+          </p>
+          <p>
+            if you're here, cool. stick around. or don't. no pressure.
           </p>
           <p>
             <a
