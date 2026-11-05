@@ -1,13 +1,35 @@
 import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
-import { Moon, Sun } from "lucide-react";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Menu, Moon, Search, Sun, X } from "lucide-react";
 import { PixelCat } from "@/components/site-chrome";
+import { Button } from "@/components/ui/button";
 
 const navLinkClass =
   "text-sm font-medium text-muted-foreground transition-colors duration-300 hover:text-foreground data-[status=active]:text-foreground";
 
 export function SiteNav() {
   const [isDark, setIsDark] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useRouterState({ select: (state) => state.location });
+
+  useEffect(() => {
+    setMenuOpen(false);
+    setSearchOpen(false);
+  }, [location.href]);
+
+  useEffect(() => {
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+        setSearchOpen(false);
+        document.getElementById(searchOpen ? "search-toggle" : "menu-toggle")?.focus();
+      }
+    };
+    document.addEventListener("keydown", onEscape);
+    return () => document.removeEventListener("keydown", onEscape);
+  }, [searchOpen]);
 
   useEffect(() => {
     setIsDark(document.documentElement.classList.contains("dark"));
@@ -26,28 +48,53 @@ export function SiteNav() {
 
   return (
     <header className="mx-auto w-full max-w-3xl border-b border-border border-x px-4">
-      <div className="flex h-14 items-center justify-between">
-        <Link to="/" className="font-pixel text-xl font-bold tracking-tight text-foreground">
+      <div className="grid h-14 grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
+        <Link to="/" search={{ q: "", tag: "All", page: 1 }} className="w-fit font-pixel text-xl font-bold text-foreground" aria-label="Vipin V blog">
           VJ
         </Link>
-        <nav className="flex items-center gap-5">
-          <Link to="/" activeOptions={{ exact: true }} className={navLinkClass}>
+        <div className="flex shrink-0 items-center gap-1">
+        <nav aria-label="Main navigation" className="mr-3 hidden items-center gap-5 sm:flex">
+          <Link to="/" search={{ q: "", tag: "All", page: 1 }} activeOptions={{ exact: true, includeSearch: false }} className={navLinkClass}>
             Blog
           </Link>
           <Link to="/about" className={navLinkClass}>
             About
           </Link>
-          <span aria-hidden className="h-4 w-px bg-border" />
-          <button
-            type="button"
+        </nav>
+          <Button id="search-toggle" variant="ghost" size="icon" aria-label={searchOpen ? "Close search" : "Search posts"} title="Search posts" aria-expanded={searchOpen} aria-controls="nav-search" onClick={() => { setSearchOpen(!searchOpen); setMenuOpen(false); }} className="text-muted-foreground">
+            {searchOpen ? <X /> : <Search />}
+          </Button>
+          <Button
+            variant="ghost" size="icon"
             aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            title={isDark ? "Switch to light mode" : "Switch to dark mode"}
             onClick={toggleTheme}
-            className="rounded-md p-1 text-muted-foreground transition-colors hover:text-foreground"
+            className="text-muted-foreground"
           >
             {isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-          </button>
-        </nav>
+          </Button>
+          <Button id="menu-toggle" variant="ghost" size="icon" className="text-muted-foreground sm:hidden" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={() => { setMenuOpen(!menuOpen); setSearchOpen(false); }}>
+            {menuOpen ? <X /> : <Menu />}
+          </Button>
+        </div>
       </div>
+      {menuOpen && (
+        <nav id="mobile-navigation" aria-label="Mobile navigation" className="grid gap-1 border-t border-border py-3 sm:hidden">
+          <Button asChild variant="ghost" className="justify-start"><Link to="/" search={{ q: "", tag: "All", page: 1 }} activeOptions={{ exact: true, includeSearch: false }} className={navLinkClass}>Blog</Link></Button>
+          <Button asChild variant="ghost" className="justify-start"><Link to="/about" className={navLinkClass}>About</Link></Button>
+        </nav>
+      )}
+      {searchOpen && (
+        <form id="nav-search" role="search" className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-t border-border py-3" onSubmit={(event) => {
+          event.preventDefault();
+          const q = String(new FormData(event.currentTarget).get("q") ?? "").trim();
+          void navigate({ to: "/", search: { q, tag: "All", page: 1 } });
+          setSearchOpen(false);
+        }}>
+          <input autoFocus type="search" name="q" aria-label="Search posts" placeholder="Search posts…" defaultValue={typeof location.search.q === "string" ? location.search.q : ""} className="h-10 min-w-0 rounded-md border border-input bg-background px-3 font-mono text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring" />
+          <Button type="submit" variant="outline" size="icon" aria-label="Submit search" title="Search"><Search /></Button>
+        </form>
+      )}
     </header>
   );
 }

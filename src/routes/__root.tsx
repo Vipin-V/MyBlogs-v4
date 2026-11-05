@@ -93,7 +93,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col overflow-x-clip">
         <SiteNav />
         {/* Full-height side rules framing the content column */}
         <div aria-hidden className="pointer-events-none fixed inset-y-0 left-1/2 -z-10 w-full max-w-3xl -translate-x-1/2 border-x border-border" />

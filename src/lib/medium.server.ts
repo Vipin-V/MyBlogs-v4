@@ -3,6 +3,8 @@
  * Runs on the server (workerd) — never imported by browser code.
  */
 
+import { estimateReadingMinutes } from "./blog-utils";
+
 export const MEDIUM_USERNAME = "vipindas233";
 
 export type MediumPost = {
@@ -13,6 +15,7 @@ export type MediumPost = {
   tags: string[];
   /** Cover image URL, or null when the post has no image */
   image: string | null;
+  readingMinutes: number;
 };
 
 function decodeXmlEntities(value: string): string {
@@ -104,6 +107,7 @@ export async function fetchMediumPosts(
       date: parsed && !Number.isNaN(parsed.getTime()) ? parsed.toISOString() : "",
       tags,
       image,
+      readingMinutes: estimateReadingMinutes(content),
     });
   }
 
