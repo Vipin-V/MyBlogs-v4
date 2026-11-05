@@ -175,7 +175,10 @@ function BlogIndex() {
         {q && (
           <div className="mb-5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border pb-4">
             <p className="min-w-0 break-words font-mono text-sm text-muted-foreground" role="status">{results.total} {results.total === 1 ? "post" : "posts"} for <span className="text-foreground">“{q}”</span></p>
-            <Button variant="ghost" size="icon" aria-label="Clear search" title="Clear search" onClick={() => void navigate({ search: (prev) => ({ ...prev, q: "", page: 1 }), resetScroll: false })}><X /></Button>
+            <div className="flex shrink-0 items-center gap-1">
+              <Button variant="outline" size="sm" className="font-mono text-xs" onClick={() => void navigate({ search: (prev) => ({ ...prev, q: "", page: 1 }), resetScroll: false })}>Show all posts</Button>
+              <Button variant="ghost" size="icon" aria-label="Clear search" title="Clear search" onClick={() => void navigate({ search: (prev) => ({ ...prev, q: "", page: 1 }), resetScroll: false })}><X /></Button>
+            </div>
           </div>
         )}
         {results.total === 0 ? (
