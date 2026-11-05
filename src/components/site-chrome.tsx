@@ -4,8 +4,21 @@ import { Button } from "@/components/ui/button";
 import { CatSprite } from "@/components/cat-sprite";
 import { catPose } from "@/lib/cat-state";
 
-export function PixelV() {
-  return <svg aria-hidden viewBox="0 0 20 20" shapeRendering="crispEdges" className="size-6"><path d="M0 0h4v12h4v4h4v-4h4V0h4v12h-4v4h-4v4H8v-4H4v-4H0z" fill="currentColor" /></svg>;
+const PIXEL_V = ["10001", "10001", "10001", "10001", "01010", "01010", "00100"];
+const PIXEL_J = ["11111", "00100", "00100", "00100", "00100", "10100", "01100"];
+
+function gridPath(rows: string[], offsetX: number) {
+  return rows
+    .flatMap((row, y) => [...row].map((cell, x) => (cell === "1" ? `M${x + offsetX} ${y}h1v1h-1z` : "")))
+    .join("");
+}
+
+export function PixelVJ() {
+  return (
+    <svg aria-hidden viewBox="0 0 11 7" shapeRendering="crispEdges" className="h-6 w-auto">
+      <path d={gridPath(PIXEL_V, 0) + gridPath(PIXEL_J, 6)} fill="currentColor" />
+    </svg>
+  );
 }
 
 /** Small "+" marker placed at line intersections, like a technical drawing grid. */
