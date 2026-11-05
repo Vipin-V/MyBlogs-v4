@@ -58,16 +58,6 @@ function AboutPage() {
           <p>
             if you're here, cool. stick around. or don't. no pressure.
           </p>
-          <p>
-            <a
-              href="https://medium.com/@vipindas233"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-foreground underline underline-offset-4 transition-colors hover:text-muted-foreground"
-            >
-              Read my stories on Medium &rarr;
-            </a>
-          </p>
         </div>
         <CrossMark className="bottom-0 left-0 -translate-x-1/2 translate-y-1/2" />
         <CrossMark className="bottom-0 right-0 translate-x-1/2 translate-y-1/2" />
