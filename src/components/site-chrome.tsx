@@ -5,7 +5,7 @@ import { CatSprite } from "@/components/cat-sprite";
 import { catPose } from "@/lib/cat-state";
 
 const PIXEL_V = ["10001", "10001", "10001", "10001", "01010", "01010", "00100"];
-const PIXEL_J = ["11111", "00100", "00100", "00100", "00100", "10100", "01100"];
+const PIXEL_J = ["00111", "00010", "00010", "00010", "00010", "10010", "01100"];
 
 function gridPath(rows: string[], offsetX: number) {
   return rows
