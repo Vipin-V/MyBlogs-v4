@@ -128,7 +128,7 @@ export function SiteNav() {
         </nav>
       )}
       {searchOpen && (
-        <form id="nav-search" role="search" className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 py-3" onSubmit={(event) => {
+        <form id="nav-search" role="search" className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-t border-border px-4 py-3" onSubmit={(event) => {
           event.preventDefault();
           const q = String(new FormData(event.currentTarget).get("q") ?? "").trim();
           void navigate({ to: "/", search: { q, tag: "All", page: 1 } });
