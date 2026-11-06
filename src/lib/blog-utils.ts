@@ -1,14 +1,26 @@
 export const POSTS_PER_PAGE = 6;
 
-/** RSS includes article HTML, but not Medium's own reading-time metadata. */
+/** Medium's approximate reading speed (words per minute). */
+const WORDS_PER_MINUTE = 265;
+
+/**
+ * RSS includes article HTML, but not Medium's own reading-time metadata,
+ * so this approximates Medium's formula: words at ~265 wpm plus a few
+ * seconds per image (12s for the first, 11s for the second, down to 3s).
+ */
 export function estimateReadingMinutes(html: string): number {
+  const images = (html.match(/<img\b/gi) ?? []).length;
   const text = html
     .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, " ")
     .replace(/<[^>]*>/g, " ")
     .replace(/&(?:#\d+|#x[\da-f]+|\w+);/gi, " ")
     .trim();
   const words = text ? text.split(/\s+/u).length : 0;
-  return Math.max(1, Math.ceil(words / 200));
+
+  let imageSeconds = 0;
+  for (let i = 0; i < images; i++) imageSeconds += Math.max(3, 12 - i);
+
+  return Math.max(1, Math.ceil(words / WORDS_PER_MINUTE + imageSeconds / 60));
 }
 
 export function selectPosts<T extends { title: string; tags: string[] }>(
