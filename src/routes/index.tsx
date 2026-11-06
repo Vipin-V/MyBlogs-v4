@@ -41,35 +41,38 @@ export const Route = createFileRoute("/")({
     const canonicalUrl = origin + canonicalPath;
     const ogImage = `${origin}/og-image.jpg`;
     return {
-    meta: [
-      { title: "Blogs · Vipin V" },
-      {
-        name: "description",
-        content:
-          "Blogs by Vipin V on tech, ideas, memories, projects and travel.",
-      },
-      { property: "og:title", content: "Blogs · Vipin V" },
-      {
-        property: "og:description",
-        content: "Blogs by Vipin V on tech, ideas, memories, projects and travel.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: canonicalUrl },
-      { property: "og:image", content: ogImage },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: ogImage },
-      { name: "author", content: "Vipin V" },
-      ...(loaderData?.search.q ? [{ name: "robots", content: "noindex, follow" }] : []),
-    ],
-    links: [{ rel: "preconnect", href: "https://miro.medium.com" }, { rel: "canonical", href: canonicalUrl }, { rel: "alternate", type: "application/rss+xml", title: "Vipin V on Medium", href: "https://medium.com/feed/@vipindas233" }],
-    scripts: [{ type: "application/ld+json", children: JSON.stringify({
-      "@context": "https://schema.org", "@type": "Blog", name: "Vipin V's Blog", url: canonicalUrl,
-      description: "Blogs by Vipin V on tech, ideas, memories, projects and travel.",
-      author: { "@type": "Person", name: "Vipin V", url: `${origin}/about`, sameAs: ["https://medium.com/@vipindas233"] },
-    }).replace(/</g, "\\u003c") }],
-  }; },
+      meta: [
+        { title: "Blogs · Vipin V" },
+        {
+          name: "description",
+          content:
+            "Blogs by Vipin V on tech, ideas, memories, projects and travel.",
+        },
+        { property: "og:title", content: "Blogs · Vipin V" },
+        {
+          property: "og:description",
+          content: "Blogs by Vipin V on tech, ideas, memories, projects and travel.",
+        },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: canonicalUrl },
+        { property: "og:image", content: ogImage },
+        { property: "og:image:width", content: "1200" },
+        { property: "og:image:height", content: "630" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:image", content: ogImage },
+        { name: "author", content: "Vipin V" },
+        ...(loaderData?.search.q ? [{ name: "robots", content: "noindex, follow" }] : []),
+      ],
+      links: [{ rel: "preconnect", href: "https://miro.medium.com" }, { rel: "canonical", href: canonicalUrl }, { rel: "alternate", type: "application/rss+xml", title: "Vipin V on Medium", href: "https://medium.com/feed/@vipindas233" }],
+      scripts: [{
+        type: "application/ld+json", children: JSON.stringify({
+          "@context": "https://schema.org", "@type": "Blog", name: "Vipin V's Blog", url: canonicalUrl,
+          description: "Blogs by Vipin V on tech, ideas, memories, projects and travel.",
+          author: { "@type": "Person", name: "Vipin V", url: `${origin}/about`, sameAs: ["https://medium.com/@vipindas233"] },
+        }).replace(/</g, "\\u003c")
+      }],
+    };
+  },
 });
 
 function formatDate(iso: string): string {
@@ -90,27 +93,27 @@ function TagPill({ tag }: { tag: string }) {
 
 function BlogSkeleton() {
   return (
-      <section className="px-4 py-6" aria-busy="true" aria-label="Loading posts">
-        <p className="mb-4 font-mono text-xs text-muted-foreground">
-          fetching posts<span className="animate-pulse">_</span>
-        </p>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {Array.from({ length: 4 }, (_, i) => (
-            <div key={i} className="rounded-lg border border-dashed border-border p-2">
-              <div className="skeleton aspect-video w-full rounded-md" />
-              <div className="space-y-2 px-1 pt-3">
-                <div className="skeleton h-4 w-4/5 rounded-sm" />
-                <div className="skeleton h-4 w-1/2 rounded-sm" />
-                <div className="skeleton mt-3 h-3 w-1/3 rounded-sm" />
-              </div>
-              <div className="flex gap-1.5 px-1 pb-1 pt-3">
-                <div className="skeleton h-5 w-14 rounded-md" />
-                <div className="skeleton h-5 w-10 rounded-md" />
-              </div>
+    <section className="px-4 py-6" aria-busy="true" aria-label="Loading posts">
+      <p className="mb-4 font-mono text-xs text-muted-foreground">
+        fetching posts<span className="animate-pulse">_</span>
+      </p>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {Array.from({ length: 4 }, (_, i) => (
+          <div key={i} className="rounded-lg border border-dashed border-border p-2">
+            <div className="skeleton aspect-video w-full rounded-md" />
+            <div className="space-y-2 px-1 pt-3">
+              <div className="skeleton h-4 w-4/5 rounded-sm" />
+              <div className="skeleton h-4 w-1/2 rounded-sm" />
+              <div className="skeleton mt-3 h-3 w-1/3 rounded-sm" />
             </div>
-          ))}
-        </div>
-      </section>
+            <div className="flex gap-1.5 px-1 pb-1 pt-3">
+              <div className="skeleton h-5 w-14 rounded-md" />
+              <div className="skeleton h-5 w-10 rounded-md" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -236,37 +239,37 @@ function PostList() {
   }
 
   return (
-      <section id="post-list" className="scroll-mt-4 px-4 py-6">
-        {q && (
-          <div className="mb-5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border pb-4">
-            <p className="min-w-0 break-words font-mono text-sm text-muted-foreground" role="status">{results.total} {results.total === 1 ? "post" : "posts"} for <span className="text-foreground">“{q}”</span></p>
-            <Button variant="ghost" size="icon" aria-label="Clear search" title="Clear search" onClick={showAll}><X /></Button>
-          </div>
-        )}
-        {results.total === 0 ? (
-          <p className="py-8 font-mono text-sm text-muted-foreground">
-            No matching posts.
-          </p>
-        ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {results.posts.map((post, i) => (
-              <PostCard key={post.link} post={post} priority={i < 2} />
-            ))}
-          </div>
-        )}
-        {q && (
-          <div className="mt-6 flex justify-center border-t border-border pt-5">
-            <Button variant="outline" size="sm" className="font-mono text-xs" onClick={showAll}>Show all posts</Button>
-          </div>
-        )}
-        {results.pageCount > 1 && (
-          <nav aria-label="Post pagination" className="mt-6 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-t border-border pt-5">
-            {results.page === 1 ? <Button variant="outline" size="icon" disabled aria-label="Previous page"><ChevronLeft /></Button> : <Button asChild variant="outline" size="icon"><Link to="/" search={{ q, tag: "All", page: results.page - 1 }} aria-label="Previous page" title="Previous page"><ChevronLeft /></Link></Button>}
-            <p className="min-w-0 text-center font-mono text-xs text-muted-foreground" aria-live="polite">Page {results.page} of {results.pageCount}<span className="mt-1 block">{results.start + 1}–{results.start + results.posts.length} of {results.total} posts</span></p>
-            {results.page === results.pageCount ? <Button variant="outline" size="icon" disabled aria-label="Next page"><ChevronRight /></Button> : <Button asChild variant="outline" size="icon"><Link to="/" search={{ q, tag: "All", page: results.page + 1 }} aria-label="Next page" title="Next page"><ChevronRight /></Link></Button>}
-          </nav>
-        )}
-      </section>
+    <section id="post-list" className="scroll-mt-4 px-4 py-6">
+      {q && (
+        <div className="mb-5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border pb-4">
+          <p className="min-w-0 break-words font-mono text-sm text-muted-foreground" role="status">{results.total} {results.total === 1 ? "post" : "posts"} for <span className="text-foreground">“{q}”</span></p>
+          <Button variant="ghost" size="icon" aria-label="Clear search" title="Clear search" onClick={showAll}><X /></Button>
+        </div>
+      )}
+      {results.total === 0 ? (
+        <p className="py-8 font-mono text-sm text-muted-foreground">
+          No matching posts.
+        </p>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {results.posts.map((post, i) => (
+            <PostCard key={post.link} post={post} priority={i < 2} />
+          ))}
+        </div>
+      )}
+      {q && (
+        <div className="mt-6 flex justify-center border-t border-border pt-5">
+          <Button variant="outline" size="sm" className="font-mono text-xs" onClick={showAll}>Show all posts</Button>
+        </div>
+      )}
+      {results.pageCount > 1 && (
+        <nav aria-label="Post pagination" className="mt-6 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-t border-border pt-5">
+          {results.page === 1 ? <Button variant="outline" size="icon" className="w-20" disabled aria-label="Previous page"><ChevronLeft /></Button> : <Button asChild variant="outline" size="icon" className="w-20"><Link to="/" search={{ q, tag: "All", page: results.page - 1 }} aria-label="Previous page" title="Previous page"><ChevronLeft /></Link></Button>}
+          <p className="min-w-0 text-center font-mono text-xs text-muted-foreground" aria-live="polite">Page {results.page} of {results.pageCount}<span className="mt-1 block">{results.start + 1}–{results.start + results.posts.length} of {results.total} posts</span></p>
+          {results.page === results.pageCount ? <Button variant="outline" size="icon" className="w-20" disabled aria-label="Next page"><ChevronRight /></Button> : <Button asChild variant="outline" size="icon" className="w-20"><Link to="/" search={{ q, tag: "All", page: results.page + 1 }} aria-label="Next page" title="Next page"><ChevronRight /></Link></Button>}
+        </nav>
+      )}
+    </section>
   );
 }
 

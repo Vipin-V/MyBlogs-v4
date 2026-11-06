@@ -25,10 +25,18 @@ describe("post selection", () => {
 
 describe("reading-time estimates", () => {
   it("uses article words rather than HTML markup", () => {
-    expect(estimateReadingMinutes(`<p>${"word ".repeat(401)}</p><script>ignored text</script>`)).toBe(3);
-    expect(estimateReadingMinutes(`<p>${"word ".repeat(200)}</p>`)).toBe(1);
+    // 265 wpm: 266 words = 2 min (Math.ceil(266 / 265) = 2)
+    expect(estimateReadingMinutes(`<p>${"word ".repeat(266)}</p><script>ignored text</script>`)).toBe(2);
+    // 265 words = 1 min
+    expect(estimateReadingMinutes(`<p>${"word ".repeat(265)}</p>`)).toBe(1);
+    // 531 words = 3 min (531 / 265 = 2.004 => 3)
+    expect(estimateReadingMinutes(`<p>${"word ".repeat(531)}</p>`)).toBe(3);
   });
   it("never shows zero minutes for an empty article", () => {
-    expect(estimateReadingMinutes("<img src='cover.jpg'>")).toBe(1);
+    expect(estimateReadingMinutes("")).toBe(1);
+  });
+  it("adds time for images", () => {
+    // 265 words = 1.0 min + first image 12s = 1.2 min => 2
+    expect(estimateReadingMinutes(`<p>${"word ".repeat(265)}</p><img src="a.jpg">`)).toBe(2);
   });
 });
