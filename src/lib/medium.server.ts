@@ -7,6 +7,15 @@ import { estimateReadingMinutes } from "./blog-utils";
 
 export const MEDIUM_USERNAME = "vipindas233";
 
+/**
+ * Optional manual cover image overrides by post slug or post link/identifier.
+ * If a post's link/slug is not present here, it falls back to the first image found in the post content.
+ */
+export const POST_COVER_OVERRIDES: Record<string, string> = {
+  // Example / Manali post override (6th image from the post):
+  "my-manali-tour-snow-friends-chaos": "https://cdn-images-1.medium.com/max/640/0*QVsUXeCLBIDHUEws",
+};
+
 export type MediumPost = {
   title: string;
   link: string;
@@ -118,15 +127,23 @@ async function fetchFeed(username: string): Promise<MediumPost[]> {
       if (tag && !tags.includes(tag)) tags.push(tag);
     }
 
-    // Cover image: first <img> inside the post content.
+    const postLink = cleanLink(link);
+
+    // Cover image: check override map first (by full link or slug match),
+    // otherwise fallback to the first <img> inside the post content.
+    const overrideKey = Object.keys(POST_COVER_OVERRIDES).find(
+      (key) => postLink.includes(key) || link.includes(key),
+    );
+    const overriddenImage = overrideKey ? POST_COVER_OVERRIDES[overrideKey] : null;
+
     const content = extractField(item, "content:encoded") ?? "";
     const imgMatch = content.match(/<img[^>]+src=["']([^"']+)["']/i);
-    const imgSrc = imgMatch?.[1];
+    const imgSrc = overriddenImage ?? imgMatch?.[1];
     const image = imgSrc ? upgradeImageSize(decodeXmlEntities(imgSrc)) : null;
 
     posts.push({
       title,
-      link: cleanLink(link),
+      link: postLink,
       date: parsed && !Number.isNaN(parsed.getTime()) ? parsed.toISOString() : "",
       tags,
       image,
