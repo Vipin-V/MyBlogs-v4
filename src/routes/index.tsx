@@ -1,3 +1,4 @@
+import { Suspense, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, Clock, X } from "lucide-react";
@@ -20,10 +21,11 @@ export const Route = createFileRoute("/")({
     page: typeof search["page"] === "number" && Number.isFinite(search["page"]) ? search["page"] : 1,
   }),
   loaderDeps: ({ search }) => ({ q: search.q, page: search.page }),
-  loader: async ({ context, deps }) => ({ ...await context.queryClient.ensureQueryData(postsQueryOptions), search: deps }),
-  pendingMs: 150,
-  pendingMinMs: 300,
-  pendingComponent: BlogSkeleton,
+  // Start fetching without blocking, so the page shell + skeleton paint immediately.
+  loader: ({ context, deps }) => {
+    void context.queryClient.prefetchQuery(postsQueryOptions);
+    return { search: deps };
+  },
   notFoundComponent: () => <FeedMessage title="Page not found">This blog page doesn't exist.</FeedMessage>,
   component: BlogIndex,
   errorComponent: ({ error }) => (
@@ -32,8 +34,8 @@ export const Route = createFileRoute("/")({
     </FeedMessage>
   ),
   head: ({ loaderData }) => {
-    const page = selectPosts(loaderData?.posts ?? [], loaderData?.search.q ?? "", "All", loaderData?.search.page ?? 1);
-    const path = page.page > 1 ? `/?page=${page.page}` : "/";
+    const pageNum = loaderData?.search.page ?? 1;
+    const path = pageNum > 1 ? `/?page=${pageNum}` : "/";
     return {
     meta: [
       { title: "Blogs · Vipin V" },
@@ -58,7 +60,6 @@ export const Route = createFileRoute("/")({
       "@context": "https://schema.org", "@type": "Blog", name: "Vipin V's Blog", url: path,
       description: "Blogs by Vipin V on tech, ideas, memories, projects and travel.",
       author: { "@type": "Person", name: "Vipin V", url: "/about", sameAs: ["https://medium.com/@vipindas233"] },
-      blogPost: page.posts.map((post) => ({ "@type": "BlogPosting", headline: post.title, url: post.link, ...(post.date ? { datePublished: post.date } : {}), ...(post.image ? { image: post.image } : {}), author: { "@type": "Person", name: "Vipin V", sameAs: "https://medium.com/@vipindas233" }, keywords: post.tags.join(", ") })),
     }).replace(/</g, "\\u003c") }],
   }; },
 });
@@ -81,20 +82,7 @@ function TagPill({ tag }: { tag: string }) {
 
 function BlogSkeleton() {
   return (
-    <div className="mx-auto w-full max-w-3xl border-x border-border" aria-busy="true" aria-label="Loading posts">
-      <section className="relative border-b border-border px-4 py-10">
-        <h1 className="font-pixel text-3xl font-semibold text-foreground sm:text-4xl">Blogs</h1>
-        <CrossMark className="bottom-0 left-0 -translate-x-1/2 translate-y-1/2" />
-        <CrossMark className="bottom-0 right-0 translate-x-1/2 translate-y-1/2" />
-      </section>
-      <section className="relative border-b border-border px-4 py-5">
-        <p className="font-mono text-sm text-muted-foreground">
-          Blogs by Vipin V on tech, ideas, memories, projects and travel.
-        </p>
-        <CrossMark className="bottom-0 left-0 -translate-x-1/2 translate-y-1/2" />
-        <CrossMark className="bottom-0 right-0 translate-x-1/2 translate-y-1/2" />
-      </section>
-      <section className="px-4 py-6">
+      <section className="px-4 py-6" aria-busy="true" aria-label="Loading posts">
         <p className="mb-4 font-mono text-xs text-muted-foreground">
           fetching posts<span className="animate-pulse">_</span>
         </p>
@@ -115,8 +103,12 @@ function BlogSkeleton() {
           ))}
         </div>
       </section>
-    </div>
   );
+}
+
+/** Medium serves any width; a 40px copy makes a tiny blurred placeholder. */
+function tinyImage(src: string) {
+  return src.replace(/resize:fit:\d+/, "resize:fit:40");
 }
 
 function PostCard({ post, priority = false }: { post: MediumPost; priority?: boolean }) {
@@ -128,16 +120,7 @@ function PostCard({ post, priority = false }: { post: MediumPost; priority?: boo
       className="group block min-w-0 rounded-lg border border-dashed border-border bg-background/50 p-2 transition-colors duration-300 hover:border-foreground/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
     >
       {post.image ? (
-        <img
-          src={post.image}
-          alt=""
-          width={800}
-          height={450}
-          loading={priority ? "eager" : "lazy"}
-          fetchPriority={priority ? "high" : "auto"}
-          decoding="async"
-          className="skeleton aspect-video w-full rounded-md object-cover object-center"
-        />
+        <BlurImage src={post.image} priority={priority} />
       ) : (
         <div className="flex aspect-video w-full items-center justify-center rounded-md bg-muted">
           <span className="font-pixel text-2xl text-muted-foreground">V</span>
@@ -158,6 +141,27 @@ function PostCard({ post, priority = false }: { post: MediumPost; priority?: boo
         ))}
       </div>
     </a>
+  );
+}
+
+function BlurImage({ src, priority }: { src: string; priority: boolean }) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
+      <img src={tinyImage(src)} alt="" aria-hidden className="absolute inset-0 h-full w-full scale-110 object-cover blur-lg" />
+      <img
+        src={src}
+        alt=""
+        width={800}
+        height={450}
+        loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : "auto"}
+        decoding="async"
+        ref={(el) => { if (el?.complete && el.naturalWidth) setLoaded(true); }}
+        onLoad={() => setLoaded(true)}
+        className={`relative h-full w-full object-cover object-center transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
+      />
+    </div>
   );
 }
 
