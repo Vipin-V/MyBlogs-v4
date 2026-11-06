@@ -1,4 +1,3 @@
-import shareImage from "@/assets/vipin-blog-share.jpg.asset.json";
 import { getRequestOrigin } from "@/lib/origin.functions";
 import { Suspense, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -36,8 +35,11 @@ export const Route = createFileRoute("/")({
     </FeedMessage>
   ),
   head: ({ loaderData }) => {
+    const origin = loaderData?.origin ?? "https://blog.vipinv.dev";
     const pageNum = loaderData?.search.page ?? 1;
-    const path = pageNum > 1 ? `/?page=${pageNum}` : "/";
+    const canonicalPath = pageNum > 1 ? `/?page=${pageNum}` : "/";
+    const canonicalUrl = origin + canonicalPath;
+    const ogImage = `${origin}/og-image.jpg`;
     return {
     meta: [
       { title: "Blogs · Vipin V" },
@@ -52,17 +54,20 @@ export const Route = createFileRoute("/")({
         content: "Blogs by Vipin V on tech, ideas, memories, projects and travel.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: canonicalUrl },
+      { property: "og:image", content: ogImage },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: path },
+      { name: "twitter:image", content: ogImage },
       { name: "author", content: "Vipin V" },
-      ...(loaderData?.origin ? [{ property: "og:image", content: loaderData.origin + shareImage.url }, { property: "og:image:width", content: "1200" }, { property: "og:image:height", content: "630" }, { name: "twitter:image", content: loaderData.origin + shareImage.url }] : []),
       ...(loaderData?.search.q ? [{ name: "robots", content: "noindex, follow" }] : []),
     ],
-    links: [{ rel: "preconnect", href: "https://miro.medium.com" }, { rel: "canonical", href: path }, { rel: "alternate", type: "application/rss+xml", title: "Vipin V on Medium", href: "https://medium.com/feed/@vipindas233" }],
+    links: [{ rel: "preconnect", href: "https://miro.medium.com" }, { rel: "canonical", href: canonicalUrl }, { rel: "alternate", type: "application/rss+xml", title: "Vipin V on Medium", href: "https://medium.com/feed/@vipindas233" }],
     scripts: [{ type: "application/ld+json", children: JSON.stringify({
-      "@context": "https://schema.org", "@type": "Blog", name: "Vipin V's Blog", url: path,
+      "@context": "https://schema.org", "@type": "Blog", name: "Vipin V's Blog", url: canonicalUrl,
       description: "Blogs by Vipin V on tech, ideas, memories, projects and travel.",
-      author: { "@type": "Person", name: "Vipin V", url: "/about", sameAs: ["https://medium.com/@vipindas233"] },
+      author: { "@type": "Person", name: "Vipin V", url: `${origin}/about`, sameAs: ["https://medium.com/@vipindas233"] },
     }).replace(/</g, "\\u003c") }],
   }; },
 });

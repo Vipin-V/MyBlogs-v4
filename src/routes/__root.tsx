@@ -52,7 +52,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "Vipin V" },
       { property: "og:description", content: "Personal blog of Vipin V — articles straight from Medium." },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://blog.vipinv.dev/og-image.jpg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://blog.vipinv.dev/og-image.jpg" },
     ],
     links: [
       {
