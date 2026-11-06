@@ -1,3 +1,5 @@
+import shareImage from "@/assets/vipin-blog-share.jpg.asset.json";
+import { getRequestOrigin } from "@/lib/origin.functions";
 import { createFileRoute } from "@tanstack/react-router";
 import { CrossMark } from "@/components/site-chrome";
 
@@ -10,7 +12,8 @@ export const Route = createFileRoute("/about")({
       </p>
     </div>
   ),
-  head: () => ({
+  loader: async () => ({ origin: await getRequestOrigin() }),
+  head: ({ loaderData }) => ({
     meta: [
       { title: "About · Vipin V" },
       {
@@ -26,6 +29,7 @@ export const Route = createFileRoute("/about")({
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:url", content: "/about" },
       { name: "author", content: "Vipin V" },
+      ...(loaderData?.origin ? [{ property: "og:image", content: loaderData.origin + shareImage.url }, { property: "og:image:width", content: "1200" }, { property: "og:image:height", content: "630" }, { name: "twitter:image", content: loaderData.origin + shareImage.url }] : []),
     ],
     links: [{ rel: "canonical", href: "/about" }],
     scripts: [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "AboutPage", url: "/about", name: "About Vipin V", mainEntity: { "@type": "Person", name: "Vipin V", sameAs: ["https://medium.com/@vipindas233"], description: "Writing about travel, food, technology and everyday life." } }) }],
