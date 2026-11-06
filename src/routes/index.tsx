@@ -185,25 +185,6 @@ function FeedMessage({
 }
 
 function BlogIndex() {
-  const { data } = useSuspenseQuery(postsQueryOptions);
-  const posts = data.posts;
-  const { q, page } = Route.useSearch();
-  const navigate = Route.useNavigate();
-
-  const results = selectPosts(posts, q, "All", page);
-
-  if (data.error && posts.length === 0) {
-    return <FeedMessage title="Couldn't load posts">{data.error}</FeedMessage>;
-  }
-
-  if (posts.length === 0) {
-    return (
-      <FeedMessage title="No posts yet">
-        Nothing published on Medium so far — new posts will appear here automatically.
-      </FeedMessage>
-    );
-  }
-
   return (
     <div className="mx-auto w-full max-w-3xl border-x border-border">
       <section className="relative border-b border-border px-4 py-10">
@@ -222,14 +203,36 @@ function BlogIndex() {
         <CrossMark className="bottom-0 right-0 translate-x-1/2 translate-y-1/2" />
       </section>
 
+      <Suspense fallback={<BlogSkeleton />}>
+        <PostList />
+      </Suspense>
+    </div>
+  );
+}
+
+function PostList() {
+  const { data } = useSuspenseQuery(postsQueryOptions);
+  const posts = data.posts;
+  const { q, page } = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const showAll = () => void navigate({ search: (prev) => ({ ...prev, q: "", page: 1 }), resetScroll: false });
+
+  const results = selectPosts(posts, q, "All", page);
+
+  if (data.error && posts.length === 0) {
+    return <Notice title="Couldn't load posts">{data.error}</Notice>;
+  }
+
+  if (posts.length === 0) {
+    return <Notice title="No posts yet">Nothing published on Medium so far — new posts will appear here automatically.</Notice>;
+  }
+
+  return (
       <section id="post-list" className="scroll-mt-4 px-4 py-6">
         {q && (
           <div className="mb-5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border pb-4">
             <p className="min-w-0 break-words font-mono text-sm text-muted-foreground" role="status">{results.total} {results.total === 1 ? "post" : "posts"} for <span className="text-foreground">“{q}”</span></p>
-            <div className="flex shrink-0 items-center gap-1">
-              <Button variant="outline" size="sm" className="font-mono text-xs" onClick={() => void navigate({ search: (prev) => ({ ...prev, q: "", page: 1 }), resetScroll: false })}>Show all posts</Button>
-              <Button variant="ghost" size="icon" aria-label="Clear search" title="Clear search" onClick={() => void navigate({ search: (prev) => ({ ...prev, q: "", page: 1 }), resetScroll: false })}><X /></Button>
-            </div>
+            <Button variant="ghost" size="icon" aria-label="Clear search" title="Clear search" onClick={showAll}><X /></Button>
           </div>
         )}
         {results.total === 0 ? (
@@ -243,6 +246,11 @@ function BlogIndex() {
             ))}
           </div>
         )}
+        {q && (
+          <div className="mt-6 flex justify-center border-t border-border pt-5">
+            <Button variant="outline" size="sm" className="font-mono text-xs" onClick={showAll}>Show all posts</Button>
+          </div>
+        )}
         {results.pageCount > 1 && (
           <nav aria-label="Post pagination" className="mt-6 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-t border-border pt-5">
             {results.page === 1 ? <Button variant="outline" size="icon" disabled aria-label="Previous page"><ChevronLeft /></Button> : <Button asChild variant="outline" size="icon"><Link to="/" search={{ q, tag: "All", page: results.page - 1 }} aria-label="Previous page" title="Previous page"><ChevronLeft /></Link></Button>}
@@ -251,6 +259,14 @@ function BlogIndex() {
           </nav>
         )}
       </section>
-    </div>
+  );
+}
+
+function Notice({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="px-4 py-16">
+      <h2 className="font-pixel text-2xl font-semibold text-foreground">{title}</h2>
+      <p className="mt-3 max-w-md font-mono text-sm text-muted-foreground">{children}</p>
+    </section>
   );
 }
