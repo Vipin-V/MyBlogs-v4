@@ -8,11 +8,11 @@ import { estimateReadingMinutes } from "./blog-utils";
 export const MEDIUM_USERNAME = "vipindas233";
 
 /**
- * Optional manual cover image overrides by post slug or post link/identifier.
- * If a post's link/slug is not present here, it falls back to the first image found in the post content.
+ * Manual cover image overrides, keyed by a fragment of the post link/slug.
+ * Use this only for posts where the Medium preview image differs from the
+ * first image in the post. Otherwise the first image in the content is used.
  */
 export const POST_COVER_OVERRIDES: Record<string, string> = {
-  // Example / Manali post override (6th image from the post):
   "my-manali-tour-snow-friends-chaos": "https://cdn-images-1.medium.com/max/640/0*QVsUXeCLBIDHUEws",
 };
 
@@ -53,10 +53,10 @@ function upgradeImageSize(url: string): string {
   // cdn-images-1.medium.com links redirect unreliably; rewrite to Medium's
   // current image host and request a larger resize.
   const legacy = url.match(
-    /https?:\/\/cdn-images-1\.medium\.com\/(?:max|fit)\/\d+\/(.+)$/i,
+    /^https?:\/\/cdn-images-1\.medium\.com\/(?:max|fit)\/\d+\/(.+)$/i,
   );
   if (legacy?.[1]) return `https://miro.medium.com/v2/resize:fit:800/${legacy[1]}`;
-  return url.replace(/\/(max|max-internal)\//, "/max/800/");
+  return url.replace(/resize:fit:\d+/, "resize:fit:800");
 }
 
 function cleanLink(url: string): string {
@@ -129,16 +129,11 @@ async function fetchFeed(username: string): Promise<MediumPost[]> {
 
     const postLink = cleanLink(link);
 
-    // Cover image: check override map first (by full link or slug match),
-    // otherwise fallback to the first <img> inside the post content.
-    const overrideKey = Object.keys(POST_COVER_OVERRIDES).find(
-      (key) => postLink.includes(key) || link.includes(key),
-    );
-    const overriddenImage = overrideKey ? POST_COVER_OVERRIDES[overrideKey] : null;
-
+    // Cover image: manual override first, otherwise the first <img> in the post.
     const content = extractField(item, "content:encoded") ?? "";
-    const imgMatch = content.match(/<img[^>]+src=["']([^"']+)["']/i);
-    const imgSrc = overriddenImage ?? imgMatch?.[1];
+    const imgSrc =
+      Object.entries(POST_COVER_OVERRIDES).find(([key]) => postLink.includes(key))?.[1] ??
+      content.match(/<img[^>]+src=["']([^"']+)["']/i)?.[1];
     const image = imgSrc ? upgradeImageSize(decodeXmlEntities(imgSrc)) : null;
 
     posts.push({
