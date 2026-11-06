@@ -1,3 +1,5 @@
+import shareImage from "@/assets/vipin-blog-share.jpg.asset.json";
+import { getRequestOrigin } from "@/lib/origin.functions";
 import { Suspense, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
@@ -22,9 +24,9 @@ export const Route = createFileRoute("/")({
   }),
   loaderDeps: ({ search }) => ({ q: search.q, page: search.page }),
   // Start fetching without blocking, so the page shell + skeleton paint immediately.
-  loader: ({ context, deps }) => {
+  loader: async ({ context, deps }) => {
     void context.queryClient.prefetchQuery(postsQueryOptions);
-    return { search: deps };
+    return { search: deps, origin: await getRequestOrigin() };
   },
   notFoundComponent: () => <FeedMessage title="Page not found">This blog page doesn't exist.</FeedMessage>,
   component: BlogIndex,
@@ -53,6 +55,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:url", content: path },
       { name: "author", content: "Vipin V" },
+      ...(loaderData?.origin ? [{ property: "og:image", content: loaderData.origin + shareImage.url }, { property: "og:image:width", content: "1200" }, { property: "og:image:height", content: "630" }, { name: "twitter:image", content: loaderData.origin + shareImage.url }] : []),
       ...(loaderData?.search.q ? [{ name: "robots", content: "noindex, follow" }] : []),
     ],
     links: [{ rel: "preconnect", href: "https://miro.medium.com" }, { rel: "canonical", href: path }, { rel: "alternate", type: "application/rss+xml", title: "Vipin V on Medium", href: "https://medium.com/feed/@vipindas233" }],
