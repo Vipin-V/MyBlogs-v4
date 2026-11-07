@@ -1,16 +1,20 @@
 # Vipin's Medium Blog
 
-create me a blog website here is an example blog website https://jdhruv.dev/blog i only need the blog page of that website so create me an exact same blog website, i have added how i want my blog website should be look like but in that screenshot the nav bar have lot of buttons i only need an about page and blog page and the blogs on the website should be taken from my median posts https://medium.com/@vipindas233 so when i upload in my median account it automatically appears in this blog website, make sure the website looks as aesthetic and beautiful as shown in the image only use necessary codes to build and think in a step by step manner
+this is my blog. no niche, no content strategy, no posting schedule, just me dumping my thoughts on the internet like it's 2009 and nobody's watching.
 
-This project was built with [Lovable](https://lovable.dev).
+## Live link
+[https://blog.vipinv.dev](https://blog.vipinv.dev)
 
-## Build with Lovable
+## Tech Stack
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/efe8bc15-e3d3-451e-92ab-4616d53850a4).
+- [Next.js 15](https://nextjs.org/) — App Router & React Server Components
+- [Medium](https://medium.com/@vipindas233) — Medium for blog post fetching
+- [Tailwind CSS](https://tailwindcss.com/) — utility-first styling
+- [Shadcn UI](https://ui.shadcn.com/) — accessible UI components
+- [TypeScript](https://www.typescriptlang.org/) — type safety throughout
+- [Cloudflare Images](https://developers.cloudflare.com/images/) — image hosting and delivery
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+
 
 ## Development
 
