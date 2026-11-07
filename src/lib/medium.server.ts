@@ -14,6 +14,7 @@ export const MEDIUM_USERNAME = "vipindas233";
  */
 export const POST_COVER_OVERRIDES: Record<string, string> = {
   "my-manali-tour-snow-friends-chaos": "https://cdn-images-1.medium.com/max/640/0*QVsUXeCLBIDHUEws",
+  "my-adavi-trip-a-spontaneous-adventure-in-kerala": "https://miro.medium.com/v2/resize:fit:720/format:webp/0*8cHQMgPlgDdGjZL_"
 };
 
 export type MediumPost = {
