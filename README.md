@@ -12,7 +12,6 @@ this is my blog. no niche, no content strategy, no posting schedule, just me dum
 - [Tailwind CSS](https://tailwindcss.com/) — utility-first styling
 - [Shadcn UI](https://ui.shadcn.com/) — accessible UI components
 - [TypeScript](https://www.typescriptlang.org/) — type safety throughout
-- [Cloudflare Images](https://developers.cloudflare.com/images/) — image hosting and delivery
 
 
 

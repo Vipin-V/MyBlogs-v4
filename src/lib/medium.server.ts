@@ -8,13 +8,12 @@ import { estimateReadingMinutes } from "./blog-utils";
 export const MEDIUM_USERNAME = "vipindas233";
 
 /**
- * Manual cover image overrides, keyed by a fragment of the post link/slug.
- * Use this only for posts where the Medium preview image differs from the
- * first image in the post. Otherwise the first image in the content is used.
+ * Manual cover overrides, keyed by a fragment of the post link.
+ * Checked first, so they win over Microlink. Use for posts where the
+ * Microlink lookup fails or returns the wrong image.
  */
 export const POST_COVER_OVERRIDES: Record<string, string> = {
   "my-manali-tour-snow-friends-chaos": "https://cdn-images-1.medium.com/max/640/0*QVsUXeCLBIDHUEws",
-  "my-adavi-trip-a-spontaneous-adventure-in-kerala": "https://miro.medium.com/v2/resize:fit:720/format:webp/0*8cHQMgPlgDdGjZL_"
 };
 
 export type MediumPost = {
@@ -52,18 +51,41 @@ function extractField(block: string, tag: string): string | null {
 
 function upgradeImageSize(url: string): string {
   // cdn-images-1.medium.com links redirect unreliably; rewrite to Medium's
-  // current image host and request a larger resize.
+  // current image host, in the same size/format Medium itself serves.
   const legacy = url.match(
     /^https?:\/\/cdn-images-1\.medium\.com\/(?:max|fit)\/\d+\/(.+)$/i,
   );
-  if (legacy?.[1]) return `https://miro.medium.com/v2/resize:fit:800/${legacy[1]}`;
-  return url.replace(/resize:fit:\d+/, "resize:fit:800");
+  if (legacy?.[1]) return `https://miro.medium.com/v2/resize:fit:828/format:webp/${legacy[1]}`;
+  return url.replace(/resize:fit:\d+/, "resize:fit:828");
 }
 
 function cleanLink(url: string): string {
   // Strip tracking query params (e.g. ?source=rss-...) from Medium links.
   const clean = url.split("?")[0] ?? "";
   return clean.length > 0 ? clean : url;
+}
+
+// Covers rarely change, so keep successful lookups to save the Microlink quota.
+const coverCache = new Map<string, string>();
+
+/** Medium's real preview image (og:image) via Microlink, or null on failure. */
+async function fetchCover(link: string): Promise<string | null> {
+  const hit = coverCache.get(link);
+  if (hit) return hit;
+  try {
+    const res = await fetch(
+      `https://api.microlink.io/?url=${encodeURIComponent(link)}`,
+      { signal: AbortSignal.timeout(8_000) },
+    );
+    if (!res.ok) return null;
+    const json = (await res.json()) as { data?: { image?: { url?: string } } };
+    const url = json.data?.image?.url;
+    if (!url) return null;
+    coverCache.set(link, url);
+    return url;
+  } catch {
+    return null; // not cached, so it is retried on the next refresh
+  }
 }
 
 // Per-server-instance cache so most visitors skip the round-trip to Medium.
@@ -111,6 +133,9 @@ async function fetchFeed(username: string): Promise<MediumPost[]> {
     .filter((chunk): chunk is string => chunk !== undefined);
 
   const posts: MediumPost[] = [];
+  // Image sources per post, resolved after parsing: override > Microlink > first <img>.
+  const imageSources: { override: string | null; firstImg: string | null }[] = [];
+
   for (const item of items) {
     const title = extractField(item, "title");
     const link = extractField(item, "link");
@@ -129,23 +154,31 @@ async function fetchFeed(username: string): Promise<MediumPost[]> {
     }
 
     const postLink = cleanLink(link);
-
-    // Cover image: manual override first, otherwise the first <img> in the post.
     const content = extractField(item, "content:encoded") ?? "";
-    const imgSrc =
-      Object.entries(POST_COVER_OVERRIDES).find(([key]) => postLink.includes(key))?.[1] ??
-      content.match(/<img[^>]+src=["']([^"']+)["']/i)?.[1];
-    const image = imgSrc ? upgradeImageSize(decodeXmlEntities(imgSrc)) : null;
+
+    imageSources.push({
+      override:
+        Object.entries(POST_COVER_OVERRIDES).find(([key]) => postLink.includes(key))?.[1] ?? null,
+      firstImg: content.match(/<img[^>]+src=["']([^"']+)["']/i)?.[1] ?? null,
+    });
 
     posts.push({
       title,
       link: postLink,
       date: parsed && !Number.isNaN(parsed.getTime()) ? parsed.toISOString() : "",
       tags,
-      image,
+      image: null,
       readingMinutes: estimateReadingMinutes(content),
     });
   }
+
+  await Promise.all(
+    posts.map(async (post, i) => {
+      const { override, firstImg } = imageSources[i]!;
+      const src = override ?? (await fetchCover(post.link)) ?? firstImg;
+      post.image = src ? upgradeImageSize(decodeXmlEntities(src)) : null;
+    }),
+  );
 
   posts.sort((a, b) => (b.date > a.date ? 1 : -1));
   return posts;
