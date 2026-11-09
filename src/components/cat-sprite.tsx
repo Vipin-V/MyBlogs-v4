@@ -1,33 +1,99 @@
-import type { CatPose } from "@/lib/cat-state";
-
-/** Original pixel artwork with the three poses supplied in the references. */
-export function CatSprite({ pose }: { pose: CatPose }) {
-  const sleeping = pose === "sleeping";
-  const attacking = pose === "attacking";
+// Pixel typing cat with authentic Comnyang colors:
+// #1A1A1A cat body, white crisp pixel outline, and realistic mechanical keys.
+export function CatSprite({ step }: { step: "left" | "right" }) {
   return (
-    <svg aria-hidden viewBox="0 0 40 40" shapeRendering="crispEdges" className={`cat-sprite ${attacking ? "cat-attack" : sleeping ? "cat-sleep" : ""}`}>
-      <g className="fill-cat-outline">
-        {sleeping ? <path d="M6 20h3v-8h4v3h10v-3h4v7h6v3h3v11h-3v3H13v-3H6z" /> : <path d="M10 4h4v4h12V4h4v12h3v7h-5v4h3v9h-7v-3h-4v3h-8V25H7V12h3z" />}
+    <svg
+      aria-hidden
+      viewBox="-2 -2 50 50"
+      shapeRendering="crispEdges"
+      className="cat-sprite size-full"
+    >
+      <defs>
+        <filter id="cat-outline" x="-20%" y="-20%" width="140%" height="140%">
+          <feMorphology operator="dilate" radius="1" in="SourceAlpha" result="dilated" />
+          <feFlood floodColor="#FFFFFF" result="flood" />
+          <feComposite in="flood" in2="dilated" operator="in" result="outline" />
+          <feMerge>
+            <feMergeNode in="outline" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <g filter="url(#cat-outline)">
+        {step === "left" ? (
+          <>
+            <path d="M33 15V14H31V13H24.5H18V16H15V17H14V20.5H15V23.5H16V24.5H17V25.5H18V26.5H20.5V27.5H21.5V36.5H39V23H38V20H37V18H36V17H35V16H34V15H33Z" fill="#1A1A1A"/>
+            <path d="M4 33V32H5V31H18V32H19V35H18V38H17V40H16V42H1V41H0V39H1V37H2V35H3V33H4Z" fill="#999797"/>
+            <path d="M0 41H1V42H16V44H15H2V43H1V42H0V41Z" fill="#605E5E"/>
+            <path d="M16 44H15V42H16V40H17V38H18V35H19V33H20V35.5H19V38.5H18V41H17V43H16V44Z" fill="#222222"/>
+            <rect x="2" y="41" width="13" height="1" fill="#D7D6D6"/>
+            <rect y="39" width="1" height="1" fill="#D9D9D9"/>
+            <rect x="1" y="40" width="1" height="1" fill="#D9D9D9"/>
+            <rect x="15" y="40" width="1" height="1" fill="#D9D9D9"/>
+            <rect x="16" y="39" width="1" height="1" fill="#D9D9D9"/>
+            <path d="M12 30V19H19V32.5H18V36H17V37H16V38H10V34H11V30H12Z" fill="#1A1A1A"/>
+            <path d="M13 9H11V11H10V13H9V18H10V22H12V23H13V24H15V25H25V24H27V23H28V22H29V21H30V18H31V14H30V11H29V10H28V9H26V8H24V7H16V8H13V9Z" fill="#1A1A1A"/>
+            <rect width="6" height="1" transform="translate(5, 17)" fill="#1A1A1A"/>
+            <rect width="6" height="1" transform="translate(6, 20)" fill="#1A1A1A"/>
+            <path d="M32 20V19H38V18H40V17H41V16H40V13H41V12H43V13H44V14H45V19H44V20H43V21H41V22H36V21H33V20H32Z" fill="#1A1A1A"/>
+            <path d="M24 29V28H25V27H38V28H39V31H38V34H37V36H36V38H21V37H20V35H21V33H22V31H23V29H24Z" fill="#999797"/>
+            <path d="M20 37H21V38H36V44H35H22V43H21V42H20V37Z" fill="#605E5E"/>
+            <path d="M36 44H35V42H36V36H37V34H38V31H39V29H40V35.5H39V38.5H38V41H37V43H36V44Z" fill="#222222"/>
+            <rect x="22" y="37" width="13" height="1" fill="#D7D6D6"/>
+            <rect x="20" y="35" width="1" height="1" fill="#D9D9D9"/>
+            <rect x="21" y="36" width="1" height="1" fill="#D9D9D9"/>
+            <rect x="35" y="36" width="1" height="1" fill="#D9D9D9"/>
+            <rect x="36" y="35" width="1" height="1" fill="#D9D9D9"/>
+            <path d="M11 12V7H12V5H13V4H14V3H15V5H16V6H17V12H11Z" fill="#1A1A1A"/>
+            <path d="M23 6V12H28V5H27V4H26V3H25V4H24V6H23Z" fill="#1A1A1A"/>
+            <path d="M24 26V21.5H25.5V16H31V17H33V25H32V27H31V29.5V32.5H30V34H25V33H24V30H25V26H24Z" fill="#1A1A1A"/>
+            <rect width="1" height="3" transform="translate(20, 15)" fill="white"/>
+            <rect width="1" height="3" transform="translate(24, 15)" fill="white"/>
+            <rect width="3" height="5" transform="translate(21, 14)" fill="white"/>
+            <rect width="3" height="3" transform="translate(21, 15)" fill="#1A1A1A"/>
+            <rect width="1" height="3" transform="translate(11, 15)" fill="white"/>
+            <rect width="1" height="3" transform="translate(15, 15)" fill="white"/>
+            <rect width="3" height="5" transform="translate(12, 14)" fill="white"/>
+            <rect width="3" height="3" transform="translate(12, 15)" fill="#1A1A1A"/>
+          </>
+        ) : (
+          <>
+            <path d="M33 15V14H31V13H24.5H18V16H15V17H14V20.5H15V23.5H16V24.5H17V25.5H18V26.5H20.5V27.5H21.5V36.5H39V23H38V20H37V18H36V17H35V16H34V15H33Z" fill="#1A1A1A"/>
+            <path d="M24 33V32H25V31H38V32H39V35H38V38H37V40H36V42H21V41H20V39H21V37H22V35H23V33H24Z" fill="#999797"/>
+            <path d="M20 41H21V42H36V44H35H22V43H21V42H20V41Z" fill="#605E5E"/>
+            <path d="M36 44H35V42H36V40H37V38H38V35H39V33H40V35.5H39V38.5H38V41H37V43H36V44Z" fill="#222222"/>
+            <rect x="22" y="41" width="13" height="1" fill="#D7D6D6"/>
+            <rect x="20" y="39" width="1" height="1" fill="#D9D9D9"/>
+            <rect x="21" y="40" width="1" height="1" fill="#D9D9D9"/>
+            <rect x="35" y="40" width="1" height="1" fill="#D9D9D9"/>
+            <rect x="36" y="39" width="1" height="1" fill="#D9D9D9"/>
+            <path d="M23 32V27.5H24.5V22H30V23H32V31H31V33H30V35.5V38.5H29V40H24V39H23V36H24V32H23Z" fill="#1A1A1A"/>
+            <path d="M4 29V28H5V27H18V28H19V31H18V34H17V36H16V38H1V37H0V35H1V33H2V31H3V29H4Z" fill="#999797"/>
+            <path d="M0 37H1V38H16V44H15H2V43H1V42H0V37Z" fill="#605E5E"/>
+            <path d="M16 44H15V42H16V36H17V34H18V31H19V29H20V35.5H19V38.5H18V41H17V43H16V44Z" fill="#222222"/>
+            <rect x="2" y="37" width="13" height="1" fill="#D7D6D6"/>
+            <rect y="35" width="1" height="1" fill="#D9D9D9"/>
+            <rect x="1" y="36" width="1" height="1" fill="#D9D9D9"/>
+            <rect x="15" y="36" width="1" height="1" fill="#D9D9D9"/>
+            <rect x="16" y="35" width="1" height="1" fill="#D9D9D9"/>
+            <path d="M12 25V14H19V27.5H18V31H17V32H16V33H10V29H11V25H12Z" fill="#1A1A1A"/>
+            <path d="M13 9H11V11H10V13H9V18H10V22H12V23H13V24H15V25H25V24H27V23H28V22H29V21H30V18H31V14H30V11H29V10H28V9H26V8H24V7H16V8H13V9Z" fill="#1A1A1A"/>
+            <rect width="6" height="1" transform="translate(6, 17)" fill="#1A1A1A"/>
+            <rect width="6" height="1" transform="translate(7, 19)" fill="#1A1A1A"/>
+            <path d="M33 22V21H39V20H41V19H42V18H41V15H42V14H44V15H45V16H46V21H45V22H44V23H42V24H37V23H34V22H33Z" fill="#1A1A1A"/>
+            <path d="M11 12V7H12V5H13V4H14V3H15V5H16V6H17V12H11Z" fill="#1A1A1A"/>
+            <path d="M23 6V12H28V5H27V4H26V3H25V4H24V6H23Z" fill="#1A1A1A"/>
+            <rect width="1" height="3" transform="translate(20, 15)" fill="white"/>
+            <rect width="1" height="3" transform="translate(24, 15)" fill="white"/>
+            <rect width="3" height="5" transform="translate(21, 14)" fill="white"/>
+            <rect width="3" height="3" transform="translate(21, 15)" fill="#1A1A1A"/>
+            <rect width="1" height="3" transform="translate(11, 15)" fill="white"/>
+            <rect width="1" height="3" transform="translate(15, 15)" fill="white"/>
+            <rect width="3" height="5" transform="translate(12, 14)" fill="white"/>
+            <rect width="3" height="3" transform="translate(12, 15)" fill="#1A1A1A"/>
+          </>
+        )}
       </g>
-      {sleeping ? (
-        <>
-          <path className="fill-cat-fur" d="M8 21h3v-7h2v3h12v-3h1v7h6v3h2v8h-3v2H14v-3H8z" />
-          <path className="fill-cat-shade" d="M18 30h8v-6h3v8H18zM12 28h4v3h-4z" />
-          <path className="fill-cat-outline" d="M10 24h5v2h-5zM20 24h5v2h-5zM15 29h5v2h-5zM28 21h3v3h-3z" />
-          <path className="fill-cat-pink" d="M12 16h2v3h-2zM24 16h2v3h-2zM17 26h2v2h-2z" />
-          <text x="26" y="9" className="fill-muted-foreground" fontSize="5" fontFamily="monospace">z</text><text x="31" y="5" className="fill-muted-foreground" fontSize="4" fontFamily="monospace">z</text>
-        </>
-      ) : (
-        <>
-          <path className="fill-cat-fur" d="M11 7h2v3h14V7h2v11h2v4h-5v5h3v7h-4v-4h-7v4h-4V24H9V14h2z" />
-          <path className="fill-cat-shade" d="M22 24h4v3h2v6h-3v-5h-3zM15 25h3v6h-3z" />
-          <path className="fill-cat-pink" d="M11 10h3v3h-3zM26 10h3v3h-3zM18 19h3v2h-3z" />
-          <path className="fill-cat-outline" d={attacking ? "M12 15h6v2h-4v2h-2zM23 15h5v4h-2v-2h-3zM18 22h4v2h-4z" : "M12 15h5v4h-5zM23 15h5v4h-5zM18 22h4v1h-4z"} />
-          {!attacking && <><path className="fill-cat-eye" d="M13 16h2v3h-2zM24 16h2v3h-2z" /><path className="fill-cat-fur" d="M12 15h1v1h-1zM23 15h1v1h-1z" /></>}
-          <path className="fill-cat-outline" d="M29 29h4v-6h3v-4h2v7h-3v6h-6z" /><path className="fill-cat-fur" d="M30 29h2v-5h2v6h-4zM35 20h2v4h-2z" />
-          {attacking && <><path className="fill-cat-outline" d="M4 22h4v3h5v4H8v-3H4z" /><path className="fill-cat-fur" d="M3 20h4v4h4v3H8v-2H3z" /><path className="fill-cat-pink" d="M3 20h2v2H3z" /><path className="fill-cat-shade" d="M1 12h2v5H1zM4 10h2v5H4zM7 8h2v5H7z" /></>}
-        </>
-      )}
     </svg>
   );
 }

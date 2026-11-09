@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CatSprite } from "@/components/cat-sprite";
-import { catPose } from "@/lib/cat-state";
+import { type CatStep, nextCatStep } from "@/lib/cat-state";
 
 const PIXEL_V = ["10001", "10001", "10001", "10001", "01010", "01010", "00100"];
 const PIXEL_J = ["00111", "00010", "00010", "00010", "00010", "10010", "01100"];
@@ -37,22 +37,56 @@ export function CrossMark({ className }: { className?: string }) {
   );
 }
 
-/** Hover wakes the cat; clicking triggers a short playful swipe. */
+/**
+ * Interactive pixel cat:
+ * Taps keys gently when idle, types faster on hover or keyboard focus,
+ * and bursts into rapid typing when clicked.
+ */
 export function PixelCat({ className }: { className?: string }) {
-  const [hovered, setHovered] = useState(false);
-  const [focused, setFocused] = useState(false);
-  const [attacks, setAttacks] = useState(0);
-  const [attacking, setAttacking] = useState(false);
+  const [step, setStep] = useState<CatStep>("left");
+  const [isFast, setIsFast] = useState(false);
+  const [isBurst, setIsBurst] = useState(false);
+
+  // Burst typing animation on click
   useEffect(() => {
-    if (!attacking) return;
-    const timer = window.setTimeout(() => setAttacking(false), 700);
+    if (!isBurst) return;
+    const timer = window.setTimeout(() => setIsBurst(false), 900);
     return () => window.clearTimeout(timer);
-  }, [attacking, attacks]);
-  const pose = catPose(hovered || focused, attacking);
+  }, [isBurst]);
+
+  // Alternates left and right paw keypresses
+  useEffect(() => {
+    const intervalMs = isBurst ? 100 : isFast ? 180 : 420;
+    const interval = window.setInterval(() => {
+      setStep((prev) => nextCatStep(prev));
+    }, intervalMs);
+    return () => window.clearInterval(interval);
+  }, [isBurst, isFast]);
+
   return (
-    <Button variant="ghost" aria-label="Play with the cat" title="Play with the cat" onPointerEnter={(event) => { if (event.pointerType !== "touch") setHovered(true); }} onPointerLeave={() => setHovered(false)} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} onClick={() => { setAttacks((count) => count + 1); setAttacking(true); }} data-state={pose} className={cn("relative h-20 w-20 shrink-0 p-0 hover:bg-transparent [&_svg]:size-20", className)}>
-      <CatSprite key={attacks} pose={pose} />
-      <span role="status" className="sr-only">{attacking ? "The cat playfully swipes at you!" : ""}</span>
+    <Button
+      variant="ghost"
+      aria-label="Click the cat to make it type faster!"
+      title="Click the cat to make it type faster!"
+      onPointerEnter={(e) => {
+        if (e.pointerType !== "touch") setIsFast(true);
+      }}
+      onPointerLeave={() => setIsFast(false)}
+      onFocus={() => setIsFast(true)}
+      onBlur={() => setIsFast(false)}
+      onClick={() => {
+        setIsBurst(true);
+        setStep((prev) => nextCatStep(prev));
+      }}
+      className={cn(
+        "group relative h-20 w-20 shrink-0 p-0 hover:bg-transparent focus-visible:ring-1 focus-visible:ring-ring select-none cursor-pointer transition-transform duration-150 active:scale-95 [&_svg]:!size-20",
+        className,
+      )}
+    >
+      <CatSprite step={step} />
+      <span role="status" className="sr-only">
+        {isBurst ? "The cat is furiously typing on the keys!" : "The cat is typing"}
+      </span>
     </Button>
   );
 }
