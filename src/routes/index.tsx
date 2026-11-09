@@ -264,9 +264,29 @@ function PostList() {
       )}
       {results.pageCount > 1 && (
         <nav aria-label="Post pagination" className="mt-6 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-t border-border pt-5">
-          {results.page === 1 ? <Button variant="outline" size="icon" className="w-20" disabled aria-label="Previous page"><ChevronLeft /></Button> : <Button asChild variant="outline" size="icon" className="w-20"><Link to="/" search={{ q, tag: "All", page: results.page - 1 }} aria-label="Previous page" title="Previous page"><ChevronLeft /></Link></Button>}
+          {results.page === 1 ? (
+            <Button variant="outline" size="icon" className="w-20 shadow-[0_2px_0_0_var(--color-border)]" disabled aria-label="Previous page">
+              <ChevronLeft />
+            </Button>
+          ) : (
+            <Button asChild variant="outline" size="icon" className="w-20 shadow-[0_2px_0_0_var(--color-border)] transition-all hover:translate-y-[-1px] hover:shadow-[0_3px_0_0_var(--color-border)] active:translate-y-[1px] active:shadow-none">
+              <Link to="/" search={{ q, tag: "All", page: results.page - 1 }} aria-label="Previous page" title="Previous page">
+                <ChevronLeft />
+              </Link>
+            </Button>
+          )}
           <p className="min-w-0 text-center font-mono text-xs text-muted-foreground" aria-live="polite">Page {results.page} of {results.pageCount}<span className="mt-1 block">{results.start + 1}–{results.start + results.posts.length} of {results.total} posts</span></p>
-          {results.page === results.pageCount ? <Button variant="outline" size="icon" className="w-20" disabled aria-label="Next page"><ChevronRight /></Button> : <Button asChild variant="outline" size="icon" className="w-20"><Link to="/" search={{ q, tag: "All", page: results.page + 1 }} aria-label="Next page" title="Next page"><ChevronRight /></Link></Button>}
+          {results.page === results.pageCount ? (
+            <Button variant="outline" size="icon" className="w-20 shadow-[0_2px_0_0_var(--color-border)]" disabled aria-label="Next page">
+              <ChevronRight />
+            </Button>
+          ) : (
+            <Button asChild variant="outline" size="icon" className="w-20 shadow-[0_2px_0_0_var(--color-border)] transition-all hover:translate-y-[-1px] hover:shadow-[0_3px_0_0_var(--color-border)] active:translate-y-[1px] active:shadow-none">
+              <Link to="/" search={{ q, tag: "All", page: results.page + 1 }} aria-label="Next page" title="Next page">
+                <ChevronRight />
+              </Link>
+            </Button>
+          )}
         </nav>
       )}
     </section>
