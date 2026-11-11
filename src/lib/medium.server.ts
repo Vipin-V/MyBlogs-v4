@@ -51,12 +51,19 @@ function extractField(block: string, tag: string): string | null {
 
 function upgradeImageSize(url: string): string {
   // cdn-images-1.medium.com links redirect unreliably; rewrite to Medium's
-  // current image host, in the same size/format Medium itself serves.
+  // current image host at a reasonable display size.
   const legacy = url.match(
     /^https?:\/\/cdn-images-1\.medium\.com\/(?:max|fit)\/\d+\/(.+)$/i,
   );
-  if (legacy?.[1]) return `https://miro.medium.com/v2/resize:fit:828/format:webp/${legacy[1]}`;
-  return url.replace(/resize:fit:\d+/, "resize:fit:828");
+  if (legacy?.[1]) return `https://miro.medium.com/v2/resize:fit:750/format:webp/${legacy[1]}`;
+  if (url.includes("miro.medium.com")) {
+    return url
+      .replace(/da:true\//, "")
+      .replace(/resize:fill:\d+:\d+/, "resize:fit:750")
+      .replace(/\/g:fp:[^/]+/, "")
+      .replace(/resize:fit:\d+/, "resize:fit:750");
+  }
+  return url.replace(/(\/max|\/max-internal\/)/, "/max/750/");
 }
 
 function cleanLink(url: string): string {

@@ -63,7 +63,7 @@ export const Route = createFileRoute("/")({
         { name: "author", content: "Vipin V" },
         ...(loaderData?.search.q ? [{ name: "robots", content: "noindex, follow" }] : []),
       ],
-      links: [{ rel: "preconnect", href: "https://miro.medium.com" }, { rel: "canonical", href: canonicalUrl }, { rel: "alternate", type: "application/rss+xml", title: "Vipin V on Medium", href: "https://medium.com/feed/@vipindas233" }],
+      links: [{ rel: "preconnect", href: "https://miro.medium.com", crossOrigin: "anonymous" }, { rel: "canonical", href: canonicalUrl }, { rel: "alternate", type: "application/rss+xml", title: "Vipin V on Medium", href: "https://medium.com/feed/@vipindas233" }],
       scripts: [{
         type: "application/ld+json", children: JSON.stringify({
           "@context": "https://schema.org", "@type": "Blog", name: "Vipin V's Blog", url: canonicalUrl,
@@ -156,15 +156,15 @@ function PostCard({ post, priority = false }: { post: MediumPost; priority?: boo
 }
 
 function BlurImage({ src, priority }: { src: string; priority: boolean }) {
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(priority); // priority images start visible in SSR HTML
   return (
     <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
       <img src={tinyImage(src)} alt="" aria-hidden className="absolute inset-0 h-full w-full scale-110 object-cover blur-lg" />
       <img
         src={src}
         alt=""
-        width={800}
-        height={450}
+        width={750}
+        height={422}
         loading={priority ? "eager" : "lazy"}
         fetchPriority={priority ? "high" : "auto"}
         decoding="async"
