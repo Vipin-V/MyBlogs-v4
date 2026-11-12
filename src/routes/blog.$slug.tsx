@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { ArrowLeft, Clock } from "lucide-react";
+import { ArrowLeft, ArrowUp, Clock } from "lucide-react";
+import { useEffect, useState } from "react";
 import { getPost } from "@/lib/wisp.functions";
 import { getRequestOrigin } from "@/lib/origin.functions";
 import { CrossMark } from "@/components/site-chrome";
@@ -100,6 +101,26 @@ function PostSkeleton() {
   );
 }
 
+function BackToTop() {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 400);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return (
+    <button
+      type="button"
+      aria-label="Back to top"
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      className={`fixed bottom-6 right-6 z-50 flex size-10 items-center justify-center rounded-full border border-border bg-background text-muted-foreground shadow-sm transition-all hover:text-foreground ${visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-2 opacity-0"}`}
+    >
+      <ArrowUp className="size-4" />
+    </button>
+  );
+}
+
 function PostPage() {
   const { slug } = Route.useParams();
   const { data: post } = useSuspenseQuery(postQuery(slug));
@@ -132,6 +153,7 @@ function PostPage() {
         <div className="article-body mx-auto max-w-2xl" dangerouslySetInnerHTML={{ __html: post.content }} />
         <div className="mx-auto mt-12 max-w-2xl border-t border-dashed border-border pt-6"><BackLink /></div>
       </div>
+      <BackToTop />
     </article>
   );
 }
