@@ -58,6 +58,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: "https://blog.vipinv.dev/og-image.jpg" },
+      { name: "google-site-verification", content: "zIUg_nOupXKuhaviMCicdMobhGSCTEF9ErpIM9Vxuv4" },
     ],
     links: [
       {
