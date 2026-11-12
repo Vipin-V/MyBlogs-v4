@@ -3,15 +3,15 @@ import { Suspense, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, Clock, X } from "lucide-react";
-import { getMediumPosts } from "@/lib/medium.functions";
-import type { MediumPost } from "@/lib/medium.functions";
+import { getPosts } from "@/lib/wisp.functions";
+import type { BlogPost } from "@/lib/wisp.functions";
 import { CrossMark } from "@/components/site-chrome";
 import { Button } from "@/components/ui/button";
 import { selectPosts } from "@/lib/blog-utils";
 
 const postsQueryOptions = queryOptions({
-  queryKey: ["medium-posts"],
-  queryFn: () => getMediumPosts(),
+  queryKey: ["posts"],
+  queryFn: () => getPosts(),
   staleTime: 10 * 60 * 1000,
 });
 
@@ -63,7 +63,7 @@ export const Route = createFileRoute("/")({
         { name: "author", content: "Vipin V" },
         ...(loaderData?.search.q ? [{ name: "robots", content: "noindex, follow" }] : []),
       ],
-      links: [{ rel: "preconnect", href: "https://miro.medium.com", crossOrigin: "anonymous" }, { rel: "canonical", href: canonicalUrl }, { rel: "alternate", type: "application/rss+xml", title: "Vipin V on Medium", href: "https://medium.com/feed/@vipindas233" }],
+      links: [{ rel: "preconnect", href: "https://imagedelivery.net", crossOrigin: "anonymous" }, { rel: "canonical", href: canonicalUrl }],
       scripts: [{
         type: "application/ld+json", children: JSON.stringify({
           "@context": "https://schema.org", "@type": "Blog", name: "Vipin V's Blog", url: canonicalUrl,
@@ -117,17 +117,13 @@ function BlogSkeleton() {
   );
 }
 
-/** Medium serves any width; a 40px copy makes a tiny blurred placeholder. */
-function tinyImage(src: string) {
-  return src.replace(/resize:fit:\d+/, "resize:fit:40");
-}
 
-function PostCard({ post, priority = false }: { post: MediumPost; priority?: boolean }) {
+
+function PostCard({ post, priority = false }: { post: BlogPost; priority?: boolean }) {
   return (
-    <a
-      href={post.link}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      to="/blog/$slug"
+      params={{ slug: post.slug }}
       className="group block min-w-0 rounded-lg border border-dashed border-border bg-background/50 p-2 transition-colors duration-300 hover:border-foreground/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
     >
       {post.image ? (
@@ -151,15 +147,14 @@ function PostCard({ post, priority = false }: { post: MediumPost; priority?: boo
           <TagPill key={tag} tag={tag} />
         ))}
       </div>
-    </a>
+    </Link>
   );
 }
 
 function BlurImage({ src, priority }: { src: string; priority: boolean }) {
   const [loaded, setLoaded] = useState(priority); // priority images start visible in SSR HTML
   return (
-    <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
-      <img src={tinyImage(src)} alt="" aria-hidden className="absolute inset-0 h-full w-full scale-110 object-cover blur-lg" />
+    <div className={`relative aspect-video w-full overflow-hidden rounded-md ${loaded ? "bg-muted" : "skeleton"}`}>
       <img
         src={src}
         alt=""
@@ -235,7 +230,7 @@ function PostList() {
   }
 
   if (posts.length === 0) {
-    return <Notice title="No posts yet">Nothing published on Medium so far — new posts will appear here automatically.</Notice>;
+    return <Notice title="No posts yet">Nothing published so far — new posts will appear here automatically.</Notice>;
   }
 
   return (
@@ -253,7 +248,7 @@ function PostList() {
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {results.posts.map((post, i) => (
-            <PostCard key={post.link} post={post} priority={i < 2} />
+            <PostCard key={post.slug} post={post} priority={i < 2} />
           ))}
         </div>
       )}
