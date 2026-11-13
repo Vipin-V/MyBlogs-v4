@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { getPost } from "@/lib/wisp.functions";
 import { getRequestOrigin } from "@/lib/origin.functions";
 import { CrossMark } from "@/components/site-chrome";
+import { PostComments } from "@/components/post-comments";
 
 const postQuery = (slug: string) =>
   queryOptions({
@@ -153,6 +154,7 @@ function PostPage() {
         <div className="article-body mx-auto max-w-2xl" dangerouslySetInnerHTML={{ __html: post.content }} />
         <div className="mx-auto mt-12 max-w-2xl border-t border-dashed border-border pt-6"><BackLink /></div>
       </div>
+      <PostComments key={slug} slug={slug} />
       <BackToTop />
     </article>
   );

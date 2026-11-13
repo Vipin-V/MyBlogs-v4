@@ -24,3 +24,8 @@
 - [x] Add the requested AI-readable /llms.txt guide
 - [x] Verify cat states, crawlable content and metadata; all ten tests pass, SSR contains all three post links, no runtime errors
 - [ ] Sitemap setup after a published public URL exists (blocked: not published)
+
+## Wisp comments
+- [x] Add per-post comments, paginated fetching and replies using Wisp's native public API
+- [x] Match the blog style with loading, empty, error and email-verification states
+- [x] Eight validation/settings tests pass; live Wisp fetching verified on desktop/mobile, reply and verification UI checked with controlled responses (real email verification requires a reader's inbox)
