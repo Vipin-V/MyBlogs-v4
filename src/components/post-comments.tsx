@@ -3,7 +3,7 @@ import { ClientOnly } from "@tanstack/react-router";
 import { queryOptions, useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, ChevronLeft, ChevronRight, LoaderCircle, MailCheck, MessageSquare, Reply, X } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Inbox, LoaderCircle, MailCheck, MessageSquare, Reply, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,6 +19,11 @@ const commentsQuery = (slug: string, page: number) => queryOptions({
   staleTime: 30_000,
   refetchInterval: 60_000,
 });
+
+// Mobile opens the default mail app; desktop opens Gmail in a new tab.
+function mailHref() {
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ? "mailto:" : "https://mail.google.com/mail/u/0/#inbox";
+}
 
 function CommentsSkeleton() {
   return <div aria-label="Loading comments" aria-busy="true" className="space-y-4 py-6">
@@ -98,7 +103,12 @@ function CommentForm({ slug, config, reply, onCancel }: { slug: string; config: 
     {mutation.isSuccess ? <div role="status" className="border-y border-dashed border-border py-7">
       <div className="flex items-center gap-3"><MailCheck className="size-5 text-muted-foreground" /><h3 className="text-sm font-semibold text-foreground">Check your inbox</h3></div>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">Your comment has been sent. Verify it using the link in Wisp’s email before it can appear here. Check your spam folder too; approval follows this blog’s comment settings.</p>
-      <Button variant="outline" size="sm" className="mt-4 font-mono" onClick={() => { mutation.reset(); onCancel(); }}>Write another comment<ArrowRight /></Button>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Button asChild size="sm" className="font-mono">
+          <a href={mailHref()} target="_blank" rel="noopener noreferrer"><Inbox />Open your mail</a>
+        </Button>
+        <Button variant="outline" size="sm" className="font-mono" onClick={() => { mutation.reset(); onCancel(); }}>Write another comment<ArrowRight /></Button>
+      </div>
     </div> : <form onSubmit={form.handleSubmit(values => mutation.mutate(values))} className="space-y-4">
       <div className="flex items-center justify-between gap-3">
         <label htmlFor="comment-content" className="text-sm font-medium text-foreground">{reply ? `Reply to ${reply.author}` : "Leave a thought"}</label>

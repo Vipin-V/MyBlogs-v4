@@ -152,9 +152,11 @@ function PostPage() {
       )}
       <div className="relative px-4 py-10">
         <div className="article-body mx-auto max-w-2xl" dangerouslySetInnerHTML={{ __html: post.content }} />
-        <div className="mx-auto mt-12 max-w-2xl border-t border-dashed border-border pt-6"><BackLink /></div>
       </div>
       <PostComments key={slug} slug={slug} />
+      <div className="border-t border-border px-4 py-8">
+        <div className="mx-auto max-w-2xl"><BackLink /></div>
+      </div>
       <BackToTop />
     </article>
   );
