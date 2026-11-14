@@ -1,5 +1,11 @@
 # Blog improvements
 
+## Gmail and loading audit
+- [ ] Fix desktop Gmail opening and retain mobile email-app behavior
+- [ ] Add real blurred previews with viewport-only homepage image loading
+- [ ] Verify homepage and article skeletons on slow first visits and navigation
+- [ ] Run relevant tests and desktop/mobile browser checks
+
 - [x] Mobile hamburger menu and navigation search
 - [x] Dates beneath titles and centered landscape thumbnails
 - [x] Reading times from Medium content (estimates, not Medium metadata)
