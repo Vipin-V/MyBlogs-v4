@@ -1,5 +1,5 @@
 import { getRequestOrigin } from "@/lib/origin.functions";
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, Clock, X } from "lucide-react";
@@ -8,6 +8,7 @@ import type { BlogPost } from "@/lib/wisp.functions";
 import { CrossMark } from "@/components/site-chrome";
 import { Button } from "@/components/ui/button";
 import { selectPosts } from "@/lib/blog-utils";
+import { BlurImage } from "@/components/blur-image";
 
 const postsQueryOptions = queryOptions({
   queryKey: ["posts"],
@@ -119,7 +120,7 @@ function BlogSkeleton() {
 
 
 
-function PostCard({ post, priority = false }: { post: BlogPost; priority?: boolean }) {
+function PostCard({ post }: { post: BlogPost }) {
   return (
     <Link
       to="/blog/$slug"
@@ -127,7 +128,7 @@ function PostCard({ post, priority = false }: { post: BlogPost; priority?: boole
       className="group block min-w-0 rounded-lg border border-dashed border-border bg-background/50 p-2 transition-colors duration-300 hover:border-foreground/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
     >
       {post.image ? (
-        <BlurImage src={post.image} priority={priority} />
+        <BlurImage key={post.image} src={post.image} />
       ) : (
         <div className="flex aspect-video w-full items-center justify-center rounded-md bg-muted">
           <span className="font-pixel text-2xl text-muted-foreground">V</span>
@@ -148,26 +149,6 @@ function PostCard({ post, priority = false }: { post: BlogPost; priority?: boole
         ))}
       </div>
     </Link>
-  );
-}
-
-function BlurImage({ src, priority }: { src: string; priority: boolean }) {
-  const [loaded, setLoaded] = useState(priority); // priority images start visible in SSR HTML
-  return (
-    <div className={`relative aspect-video w-full overflow-hidden rounded-md ${loaded ? "bg-muted" : "skeleton"}`}>
-      <img
-        src={src}
-        alt=""
-        width={750}
-        height={422}
-        loading={priority ? "eager" : "lazy"}
-        fetchPriority={priority ? "high" : "auto"}
-        decoding="async"
-        ref={(el) => { if (el?.complete && el.naturalWidth) setLoaded(true); }}
-        onLoad={() => setLoaded(true)}
-        className={`relative h-full w-full object-cover object-center transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
-      />
-    </div>
   );
 }
 
@@ -247,8 +228,8 @@ function PostList() {
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {results.posts.map((post, i) => (
-            <PostCard key={post.slug} post={post} priority={i < 2} />
+          {results.posts.map((post) => (
+            <PostCard key={post.slug} post={post} />
           ))}
         </div>
       )}

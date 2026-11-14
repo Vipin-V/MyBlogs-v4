@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { commentSchema, fetchComments, safeWebsite, submitComment } from "@/lib/wisp-comments";
 import type { CommentValues, CommentsData, WispComment } from "@/lib/wisp-comments";
+import { mailDestination } from "@/lib/loading-utils";
 
 const commentsQuery = (slug: string, page: number) => queryOptions({
   queryKey: ["comments", slug, page],
@@ -19,11 +20,6 @@ const commentsQuery = (slug: string, page: number) => queryOptions({
   staleTime: 30_000,
   refetchInterval: 60_000,
 });
-
-// Mobile opens the default mail app; desktop opens Gmail in a new tab.
-function mailHref() {
-  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ? "mailto:" : "https://mail.google.com/mail/u/0/#inbox";
-}
 
 function CommentsSkeleton() {
   return <div aria-label="Loading comments" aria-busy="true" className="space-y-4 py-6">
@@ -105,7 +101,7 @@ function CommentForm({ slug, config, reply, onCancel }: { slug: string; config: 
       <p className="mt-3 text-sm leading-6 text-muted-foreground">Your comment has been sent. Verify it using the link in Wisp’s email before it can appear here. Check your spam folder too; approval follows this blog’s comment settings.</p>
       <div className="mt-4 flex flex-wrap gap-2">
         <Button asChild size="sm" className="font-mono">
-          <a href={mailHref()} target="_blank" rel="noopener noreferrer"><Inbox />Open your mail</a>
+          <a {...mailDestination(navigator.userAgent, navigator.maxTouchPoints)} rel="noopener noreferrer"><Inbox />Open your mail</a>
         </Button>
         <Button variant="outline" size="sm" className="font-mono" onClick={() => { mutation.reset(); onCancel(); }}>Write another comment<ArrowRight /></Button>
       </div>

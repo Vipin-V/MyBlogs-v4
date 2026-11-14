@@ -58,6 +58,8 @@ export const Route = createFileRoute("/blog/$slug")({
   },
   component: PostPage,
   pendingComponent: PostSkeleton,
+  pendingMs: 150,
+  pendingMinMs: 300,
   notFoundComponent: () => (
     <Shell>
       <h1 className="font-pixel text-2xl font-semibold text-foreground">Post not found</h1>
@@ -92,7 +94,7 @@ function formatDate(iso: string) {
 
 function PostSkeleton() {
   return (
-    <div className="mx-auto w-full max-w-3xl border-x border-border px-4 py-10" aria-busy="true">
+    <div className="mx-auto w-full max-w-3xl border-x border-border px-4 py-10" aria-busy="true" aria-label="Loading post">
       <div className="skeleton h-3 w-24 rounded-sm" />
       <div className="skeleton mt-6 h-8 w-4/5 rounded-sm" />
       <div className="skeleton mt-3 h-3 w-40 rounded-sm" />

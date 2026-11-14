@@ -1,10 +1,10 @@
 # Blog improvements
 
 ## Gmail and loading audit
-- [ ] Fix desktop Gmail opening and retain mobile email-app behavior
-- [ ] Add real blurred previews with viewport-only homepage image loading
-- [ ] Verify homepage and article skeletons on slow first visits and navigation
-- [ ] Run relevant tests and desktop/mobile browser checks
+- [x] Fix desktop Gmail opening and retain mobile email-app behavior
+- [x] Add real blurred previews with viewport-only homepage image loading
+- [x] Verify delayed homepage/article navigation skeletons; direct article visits return full server-rendered articles and metadata, without a skeleton during the initial server response wait
+- [x] Fourteen tests pass; desktop/mobile previews and controlled embedded Gmail navigation verified (actual inbox/email verification remains untested)
 
 - [x] Mobile hamburger menu and navigation search
 - [x] Dates beneath titles and centered landscape thumbnails

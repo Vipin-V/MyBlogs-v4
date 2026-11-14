@@ -18,3 +18,5 @@
 
 - Blog posts come live from the Wisp CMS public API (server-side in `src/lib/wisp.server.ts`, exposed via `src/lib/wisp.functions.ts`, 5-minute cache); Wisp is the single source of truth and posts render on-site at `/blog/$slug`.
 - Comments use Wisp's native public browser API independently of article loading; Wisp owns persistence, email verification and moderation, while its settings control replies, website links and email consent.
+- Homepage cover requests are gated by a zero-margin IntersectionObserver; Wisp's managed image optimizer supplies tiny previews because its Cloudflare account disables flexible variants.
+- Mail links use top-level navigation to avoid Google's refusal to render inside embedded preview tabs; mobile destinations use the system mail handler.
