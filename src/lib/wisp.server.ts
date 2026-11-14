@@ -87,7 +87,12 @@ export function fetchPost(slug: string): Promise<BlogPostDetail | null> {
     if (!post) return null;
     let content = cleanContent(post.content ?? "");
     // The cover already shows above the article; drop its duplicate inside the body.
-    if (post.image) content = content.replace(new RegExp(`<p>\\s*<img[^>]*src="${post.image.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"[^>]*>\\s*</p>`), "");
+    if (post.image) {
+      const src = post.image.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      content = content
+        .replace(new RegExp(`<img[^>]*src=["']${src}["'][^>]*>`), "")
+        .replace(/<(p|figure)[^>]*>\s*(<figcaption>\s*<\/figcaption>)?\s*<\/\1>/gi, "");
+    }
     return { ...toPost(post, content), content, author: post.author?.name ?? "Vipin V" };
   });
 }
