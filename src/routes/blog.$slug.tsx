@@ -168,7 +168,7 @@ function PostPage() {
 function galleryClick(e: MouseEvent) {
   const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".post-gallery-btn");
   const track = btn?.parentElement?.querySelector<HTMLElement>(".post-gallery-track");
-  if (btn && track) track.scrollBy({ left: Number(btn.dataset.dir) * track.clientWidth, behavior: "smooth" });
+  if (btn && track) track.scrollBy({ left: Number(btn.dataset["dir"]) * track.clientWidth, behavior: "smooth" });
 }
 function galleryScroll(e: UIEvent) {
   const track = e.target as HTMLElement;
