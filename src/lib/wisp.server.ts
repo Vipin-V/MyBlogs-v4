@@ -1,5 +1,6 @@
 /** Server-only Wisp CMS client. Wisp is the single source of truth for posts. */
 import { estimateReadingMinutes } from "./blog-utils";
+import { groupImages } from "./gallery";
 
 const BLOG_ID = "0ffdcdc7-68bd-448b-bdc8-c6b4f6533a0a";
 const API = `https://www.wisp.blog/api/v1/${BLOG_ID}`;
@@ -93,6 +94,7 @@ export function fetchPost(slug: string): Promise<BlogPostDetail | null> {
         .replace(new RegExp(`<img[^>]*src=["']${src}["'][^>]*>`), "")
         .replace(/<(p|figure)[^>]*>\s*(<figcaption>\s*<\/figcaption>)?\s*<\/\1>/gi, "");
     }
+    content = groupImages(content);
     return { ...toPost(post, content), content, author: post.author?.name ?? "Vipin V" };
   });
 }

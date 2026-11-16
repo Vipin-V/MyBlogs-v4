@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowLeft, ArrowUp, Clock } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent, type UIEvent } from "react";
 import { getPost } from "@/lib/wisp.functions";
 import { getRequestOrigin } from "@/lib/origin.functions";
 import { CrossMark } from "@/components/site-chrome";
@@ -153,7 +153,7 @@ function PostPage() {
         </div>
       )}
       <div className="relative px-4 py-10">
-        <div className="article-body mx-auto max-w-2xl" dangerouslySetInnerHTML={{ __html: post.content }} />
+        <div className="article-body mx-auto max-w-2xl" onClick={galleryClick} onScrollCapture={galleryScroll} dangerouslySetInnerHTML={{ __html: post.content }} />
       </div>
       <PostComments key={slug} slug={slug} />
       <div className="border-t border-border px-4 py-8">
@@ -163,3 +163,17 @@ function PostPage() {
     </article>
   );
 }
+
+/** Gallery arrows + counter for server-grouped images (no carousel library needed). */
+function galleryClick(e: MouseEvent) {
+  const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".post-gallery-btn");
+  const track = btn?.parentElement?.querySelector<HTMLElement>(".post-gallery-track");
+  if (btn && track) track.scrollBy({ left: Number(btn.dataset.dir) * track.clientWidth, behavior: "smooth" });
+}
+function galleryScroll(e: UIEvent) {
+  const track = e.target as HTMLElement;
+  if (!track.classList?.contains("post-gallery-track")) return;
+  const count = track.parentElement?.querySelector(".post-gallery-count");
+  if (count) count.textContent = `${Math.round(track.scrollLeft / track.clientWidth) + 1} / ${track.children.length}`;
+}
+
