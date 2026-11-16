@@ -1,9 +1,9 @@
 # Blog improvements
 
 ## Carousel repair
-- [ ] Keep portrait and landscape gallery photos fully visible on desktop and mobile
-- [ ] Add subtle horizontal parallax without zooming or cropping photos
-- [ ] Restore easy vertical touch scrolling over galleries and verify the live test post
+- [x] Keep portrait and landscape gallery photos fully visible on desktop and mobile
+- [x] Add subtle horizontal parallax without zooming or cropping photos
+- [x] Restore easy vertical touch scrolling over galleries and verify the live test post (all five photos, arrows, horizontal swipe, vertical touch scroll and reduced motion; three grouping tests pass)
 
 ## Gmail and loading audit
 - [x] Fix desktop Gmail opening and retain mobile email-app behavior
