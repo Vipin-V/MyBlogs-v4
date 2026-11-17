@@ -7,6 +7,7 @@ import { getRequestOrigin } from "@/lib/origin.functions";
 import { CrossMark } from "@/components/site-chrome";
 import { PostComments } from "@/components/post-comments";
 import { usePostGalleries } from "@/hooks/use-post-galleries";
+import { useCodeCopy } from "@/hooks/use-code-copy";
 
 const postQuery = (slug: string) =>
   queryOptions({
@@ -130,6 +131,7 @@ function PostPage() {
   const { data: post } = useSuspenseQuery(postQuery(slug));
   const bodyRef = useRef<HTMLDivElement>(null);
   usePostGalleries(bodyRef, post.content);
+  useCodeCopy(bodyRef);
   return (
     <article className="mx-auto w-full max-w-3xl border-x border-border">
       <header className="relative border-b border-border px-4 py-10">

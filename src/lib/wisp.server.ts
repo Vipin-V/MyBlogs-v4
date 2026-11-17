@@ -1,6 +1,7 @@
 /** Server-only Wisp CMS client. Wisp is the single source of truth for posts. */
 import { estimateReadingMinutes } from "./blog-utils";
 import { groupImages } from "./gallery";
+import { highlightCodeBlocks } from "./code-blocks";
 
 const BLOG_ID = "0ffdcdc7-68bd-448b-bdc8-c6b4f6533a0a";
 const API = `https://www.wisp.blog/api/v1/${BLOG_ID}`;
@@ -45,7 +46,7 @@ async function getJson<T>(path: string): Promise<T> {
 
 /** Remove third-party attribution and fix legacy Medium image hosts. */
 function cleanContent(html: string): string {
-  return html
+  return highlightCodeBlocks(html)
     .replace(/<p[^>]*>\s*<small>\s*Powered by[\s\S]*?<\/small>\s*<\/p>/gi, "")
     .replace(/https?:\/\/cdn-images-1\.medium\.com\/(?:max|fit)\/\d+\//gi, "https://miro.medium.com/v2/resize:fit:1400/")
     .replace(/<img /gi, '<img loading="lazy" decoding="async" ');

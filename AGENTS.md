@@ -21,3 +21,4 @@
 - Homepage cover requests are gated by a zero-margin IntersectionObserver; Wisp's managed image optimizer supplies tiny previews because its Cloudflare account disables flexible variants.
 - Mail links use top-level navigation to avoid Google's refusal to render inside embedded preview tabs; mobile destinations use the system mail handler.
 - Server-grouped article galleries are enhanced by Embla in a cleanup-managed client effect; bounded contain images preserve full ratios, pan-y permits article scrolling, and horizontal parallax respects reduced motion.
+- Article code blocks are highlighted server-side in the cached Wisp content (highlight.js core, limited languages) so no highlighter ships to the browser; copy uses one delegated client listener.
