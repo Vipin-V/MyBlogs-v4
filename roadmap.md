@@ -1,5 +1,10 @@
 # Blog improvements
 
+## Search Console and indexing
+- [ ] Include every current and future Wisp article in the sitemap and handle feed failures safely
+- [ ] Correct remaining About and LLM discovery metadata
+- [ ] Verify the live sitemap, submit it to Search Console and report Google's current indexing status
+
 ## Carousel repair
 - [x] Keep portrait and landscape gallery photos fully visible on desktop and mobile
 - [x] Add subtle horizontal parallax without zooming or cropping photos
