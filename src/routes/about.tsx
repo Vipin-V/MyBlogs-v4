@@ -13,7 +13,10 @@ export const Route = createFileRoute("/about")({
     </div>
   ),
   loader: async () => ({ origin: await getRequestOrigin() }),
-  head: ({ loaderData }) => ({
+  head: ({ loaderData }) => {
+    const origin = loaderData?.origin ?? "https://blog.vipinv.dev";
+    const url = `${origin}/about`;
+    return {
     meta: [
       { title: "About · Vipin V" },
       {
