@@ -18,7 +18,7 @@
 
 - Blog posts come live from the Wisp CMS public API (server-side in `src/lib/wisp.server.ts`, exposed via `src/lib/wisp.functions.ts`, 5-minute cache); Wisp is the single source of truth and posts render on-site at `/blog/$slug`.
 - Comments use Wisp's native public browser API independently of article loading; Wisp owns persistence, email verification and moderation, while its settings control replies, website links and email consent.
-- Homepage cover requests are gated by a zero-margin IntersectionObserver; Wisp's managed image optimizer supplies tiny previews because its Cloudflare account disables flexible variants.
+- Homepage cover requests are gated by a zero-margin IntersectionObserver, except the first (likely LCP) cover, which server-renders eagerly with high fetch priority; fonts are self-hosted via Fontsource; Wisp's managed image optimizer supplies tiny previews because its Cloudflare account disables flexible variants.
 - Mail links use top-level navigation to avoid Google's refusal to render inside embedded preview tabs; mobile destinations use the system mail handler.
 - Server-grouped article galleries are enhanced by Embla in a cleanup-managed client effect; bounded contain images preserve full ratios, pan-y permits article scrolling, and horizontal parallax respects reduced motion.
 - Article code blocks are highlighted server-side in the cached Wisp content (highlight.js core, limited languages) so no highlighter ships to the browser; copy uses one delegated client listener.

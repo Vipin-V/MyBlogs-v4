@@ -64,7 +64,7 @@ export const Route = createFileRoute("/")({
         { name: "author", content: "Vipin V" },
         ...(loaderData?.search.q ? [{ name: "robots", content: "noindex, follow" }] : []),
       ],
-      links: [{ rel: "preconnect", href: "https://imagedelivery.net", crossOrigin: "anonymous" }, { rel: "canonical", href: canonicalUrl }],
+      links: [{ rel: "canonical", href: canonicalUrl }],
       scripts: [{
         type: "application/ld+json", children: JSON.stringify({
           "@context": "https://schema.org", "@type": "Blog", name: "Vipin V's Blog", url: canonicalUrl,
@@ -120,7 +120,7 @@ function BlogSkeleton() {
 
 
 
-function PostCard({ post }: { post: BlogPost }) {
+function PostCard({ post, priority = false }: { post: BlogPost; priority?: boolean }) {
   return (
     <Link
       to="/blog/$slug"
@@ -128,7 +128,7 @@ function PostCard({ post }: { post: BlogPost }) {
       className="group block min-w-0 rounded-lg border border-dashed border-border bg-background/50 p-2 transition-colors duration-300 hover:border-foreground/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
     >
       {post.image ? (
-        <BlurImage key={post.image} src={post.image} />
+        <BlurImage key={post.image} src={post.image} priority={priority} />
       ) : (
         <div className="flex aspect-video w-full items-center justify-center rounded-md bg-muted">
           <span className="font-pixel text-2xl text-muted-foreground">V</span>
@@ -228,8 +228,8 @@ function PostList() {
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {results.posts.map((post) => (
-            <PostCard key={post.slug} post={post} />
+          {results.posts.map((post, index) => (
+            <PostCard key={post.slug} post={post} priority={index === 0} />
           ))}
         </div>
       )}

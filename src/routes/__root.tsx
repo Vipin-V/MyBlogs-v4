@@ -10,6 +10,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import geistLatin from "@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 
@@ -63,12 +64,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Silkscreen:wght@400;700&display=swap",
-      },
+      // Self-hosted body font: preload breaks the HTML → CSS → font chain.
+      { rel: "preload", href: geistLatin, as: "font", type: "font/woff2", crossOrigin: "anonymous" },
+      // No crossOrigin: <img> fetches are no-cors and would not reuse a CORS preconnect.
+      { rel: "preconnect", href: "https://imagedelivery.net" },
     ],
     scripts: [{ children: THEME_INIT_SCRIPT }],
   }),
