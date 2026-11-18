@@ -2,12 +2,9 @@
 
 > Blogs by Vipin V on tech, ideas, memories, projects and travel.
 
-Vipin writes personal posts about technology, projects, travel, food and everyday life. There is no fixed niche or publishing schedule. This website lists his posts from his public Wisp RSS feed. Full articles are read on Wisp; Wisp is the source of truth. Card reading times are estimates at 200 words per minute, rounded up, not Wisp's official reading times.
+Vipin writes personal posts about technology, projects, travel, food and everyday life. There is no fixed niche or publishing schedule. Articles are published with the Wisp CMS and render in full on this website at /blog/{slug}. Reading times are estimates at 200 words per minute.
 
 ## Pages
-- [Blogs](/): Recent articles with titles, publication dates, tags, estimated reading times and links to the original articles. Search and pagination are available.
-- [About Vipin](/about): The author's own introduction and interests.
-
-## Writing
-- [Vipin on Wisp](https://medium.com/@vipindas233): Original full articles and the author's publication history.
-- [Public Wisp RSS](https://medium.com/feed/@vipindas233): Machine-readable source for the latest articles.
+- [Blogs](https://blog.vipinv.dev/): Recent articles with titles, publication dates, tags and estimated reading times. Search and pagination are available.
+- [About Vipin](https://blog.vipinv.dev/about): The author's own introduction and interests.
+- [Sitemap](https://blog.vipinv.dev/sitemap.xml): Every public page, including all published articles.

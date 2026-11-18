@@ -8,7 +8,7 @@ function escapeXml(value: string): string {
 }
 
 export function buildSitemapXml(posts: SitemapPost[]): string {
-  const entries = [
+  const entries: { loc: string; changefreq?: string; priority?: string }[] = [
     { loc: `${BASE_URL}/`, changefreq: "daily", priority: "1.0" },
     { loc: `${BASE_URL}/about`, changefreq: "monthly", priority: "0.7" },
     ...posts.map((post) => ({ loc: `${BASE_URL}/blog/${encodeURIComponent(post.slug)}` })),

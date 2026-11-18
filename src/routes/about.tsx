@@ -30,13 +30,14 @@ export const Route = createFileRoute("/about")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "/about" },
+      { property: "og:url", content: url },
       { name: "author", content: "Vipin V" },
       ...(loaderData?.origin ? [{ property: "og:image", content: loaderData.origin + shareImage.url }, { property: "og:image:width", content: "1200" }, { property: "og:image:height", content: "630" }, { name: "twitter:image", content: loaderData.origin + shareImage.url }] : []),
     ],
-    links: [{ rel: "canonical", href: "/about" }],
-    scripts: [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "AboutPage", url: "/about", name: "About Vipin V", mainEntity: { "@type": "Person", name: "Vipin V", sameAs: ["https://medium.com/@vipindas233"], description: "Writing about travel, food, technology and everyday life." } }) }],
-  }),
+    links: [{ rel: "canonical", href: url }],
+    scripts: [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "AboutPage", url, name: "About Vipin V", mainEntity: { "@type": "Person", name: "Vipin V", sameAs: ["https://medium.com/@vipindas233"], description: "Writing about travel, food, technology and everyday life." } }) }],
+    };
+  },
 });
 
 function AboutPage() {
