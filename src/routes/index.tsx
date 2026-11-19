@@ -23,10 +23,13 @@ export const Route = createFileRoute("/")({
     page: typeof search["page"] === "number" && Number.isFinite(search["page"]) ? search["page"] : 1,
   }),
   loaderDeps: ({ search }) => ({ q: search.q, page: search.page }),
-  // Start fetching without blocking, so the page shell + skeleton paint immediately.
+  // Await posts so the first HTML already holds the cards and LCP image (streaming them cost ~2s of LCP render delay).
   loader: async ({ context, deps }) => {
-    void context.queryClient.prefetchQuery(postsQueryOptions);
-    return { search: deps, origin: await getRequestOrigin() };
+    const [, origin] = await Promise.all([
+      context.queryClient.ensureQueryData(postsQueryOptions),
+      getRequestOrigin(),
+    ]);
+    return { search: deps, origin };
   },
   notFoundComponent: () => <FeedMessage title="Page not found">This blog page doesn't exist.</FeedMessage>,
   component: BlogIndex,
